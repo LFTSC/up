@@ -78,6 +78,20 @@ If you're using Up for a production application it's highly recommended to confi
     },
     {
       "Action": [
+        "sns:*"
+      ],
+      "Effect": "Allow",
+      "Resource": "*"
+    },
+    {
+      "Action": [
+        "ssm:*"
+      ],
+      "Effect": "Allow",
+      "Resource": "*"
+    },
+    {
+      "Action": [
         "cloudformation:Create*",
         "cloudformation:Update*",
         "cloudformation:Delete*",
