@@ -50,6 +50,25 @@ type Deploy struct {
 	Author string
 }
 
+// Secret is an encrypted variable..
+type Secret struct {
+	App              string
+	Name             string
+	Stage            string
+	Value            string
+	Description      string
+	LastModifiedUser string
+	LastModified     time.Time
+}
+
+// Secrets is the interface for managing encrypted secrets.
+type Secrets interface {
+	Add(key, val, desc string, plain bool) error
+	Remove(key string) error
+	List() ([]*Secret, error)
+	Load() ([]*Secret, error)
+}
+
 // Platform is the interface for platform integration,
 // defining the basic set of functionality required for
 // Up applications.
