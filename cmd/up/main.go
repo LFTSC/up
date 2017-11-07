@@ -64,6 +64,7 @@ func run() error {
 		"arch":    runtime.GOARCH,
 		"version": version,
 		"ci":      os.Getenv("CI") == "true" || os.Getenv("CI") == "1",
+		"plan":    "pro",
 	})
 
 	return app.Run(version)
