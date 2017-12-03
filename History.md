@@ -141,6 +141,12 @@ v0.4.0 / 2017-12-18
   * fix upgrade messages for OSS -> Pro
   * fix clearing state in text reporter  
 
+v0.2.0-pro / 2017-12-03
+=======================
+
+  * add hosted email alerting for nicer formatting
+  * change alert default `period` to 1m
+
 v0.1.11-pro / 2017-11-30
 ========================
 
