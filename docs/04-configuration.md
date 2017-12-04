@@ -853,7 +853,7 @@ The sms action notify your team via sms text message.
 {
   "name": "text.backend",
   "type": "sms",
-  "emails": ["+12508183100"]
+  "numbers": ["+12508183100"]
 }
 ```
 
