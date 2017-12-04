@@ -789,6 +789,11 @@ The Pro version of Up supports defining alerts which can notify your team when y
       "name": "email.backend",
       "type": "email",
       "emails": ["tj@apex.sh"]
+    },
+    {
+      "name": "text.backend",
+      "type": "sms",
+      "numbers": ["+12508183100"]
     }
   ],
   "alerts": [
@@ -817,15 +822,8 @@ The Pro version of Up supports defining alerts which can notify your team when y
       "statistic": "avg",
       "threshold": 1000,
       "period": "5m",
-      "action": "email.backend"
-    },
-    {
-      "namespace": "AWS/ApiGateway",
-      "metric": "Count",
-      "statistic": "sum",
-      "threshold": 500,
       "action": "email.backend",
-      "description": "Some description here."
+      "description": "Large traffic spike"
     }
   ]
 }
@@ -833,14 +831,29 @@ The Pro version of Up supports defining alerts which can notify your team when y
 
 ### Defining Actions
 
-An action must be defined in order to notify your team of triggered and resolved  alerts. The action requires a `name`, which can be any string such "backend", "frontend_team", "email.backend", anything you prefer. Currently the only `type` available is "email", which requires that you define one or more `emails`.
+An action must be defined in order to notify your team of triggered and resolved  alerts. The action requires a `name`, which can be any string such "backend", "frontend_team", "email.backend", "email backend", whichever you prefer.
 
+#### Email
+
+The email action notify your team via email.
 
 ```json
 {
   "name": "email.backend",
   "type": "email",
   "emails": ["tj@apex.sh"]
+}
+```
+
+#### SMS
+
+The sms action notify your team via sms text message.
+
+```json
+{
+  "name": "text.backend",
+  "type": "sms",
+  "emails": ["+12508183100"]
 }
 ```
 
