@@ -15,6 +15,7 @@ import (
 	"github.com/apex/up/internal/stats"
 	"github.com/apex/up/internal/util"
 	"github.com/apex/up/internal/validate"
+	"github.com/apex/up/platform/lambda/runtime"
 )
 
 func init() {
@@ -77,7 +78,12 @@ retry:
 	defer util.Pad()()
 	start := time.Now()
 
+<<<<<<< HEAD
 	if err := p.Init(stage); err != nil {
+=======
+	r := runtime.New(c)
+	if err := r.Init(stage); err != nil {
+>>>>>>> add initialization of env vars for deployments. Closes #458
 		return errors.Wrap(err, "initializing")
 	}
 
