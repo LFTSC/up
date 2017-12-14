@@ -78,12 +78,8 @@ retry:
 	defer util.Pad()()
 	start := time.Now()
 
-<<<<<<< HEAD
-	if err := p.Init(stage); err != nil {
-=======
 	r := runtime.New(c)
 	if err := r.Init(stage); err != nil {
->>>>>>> add initialization of env vars for deployments. Closes #458
 		return errors.Wrap(err, "initializing")
 	}
 
@@ -115,6 +111,8 @@ retry:
 		"has_error_pages":      !c.ErrorPages.Disable,
 		"app_name_hash":        util.Md5(c.Name),
 		"is_git":               commit.Author.Name != "",
+		"alerts_count":         len(c.Alerts),
+		"actions_count":        len(c.Actions),
 	})
 
 	stats.Flush()
