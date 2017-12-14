@@ -115,6 +115,8 @@ retry:
 		"has_error_pages":      !c.ErrorPages.Disable,
 		"app_name_hash":        util.Md5(c.Name),
 		"is_git":               commit.Author.Name != "",
+		"alerts_count":         len(c.Alerts),
+		"actions_count":        len(c.Actions),
 	})
 
 	stats.Flush()
