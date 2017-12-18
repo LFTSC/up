@@ -122,6 +122,18 @@ v0.4.1 / 2017-12-18
 
   * fix upgrades to pro when version matches
 
+v0.4.0-pro / 2017-12-18
+=======================
+
+  * add slack `gif` option
+  * add slack alert support
+  * add initialization of env vars for builds. Closes #458
+  * add initialization of env vars for deployments. Closes #458
+  * add initialization of env vars for `up start`. Closes #458
+  * add `{alerts,actions}_count` to Deploy track
+  * change missing default to `notBreaching`
+  * refactor: add title casing to `up env` output
+
 v0.4.0 / 2017-12-18
 ===================
 
