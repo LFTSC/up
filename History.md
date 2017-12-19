@@ -110,6 +110,12 @@ v0.4.3 / 2017-12-19
 
   * refactor: shorten s3 bucket name
 
+v0.4.1-pro / 2017-12-19
+=======================
+
+  * remove 0.0.0 hack for pro upgrade
+  * Rebase
+
 v0.4.2 / 2017-12-19
 ===================
 
