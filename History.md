@@ -86,6 +86,11 @@ v0.4.6 / 2018-01-03
   * fix output flickering before build output
   * fix: add a ! in front of build.gradle for forced inclusion (#518)
 
+v0.4.4-pro / 2017-12-22
+=======================
+
+  * Rebase
+
 v0.4.5 / 2017-12-22
 ===================
 
