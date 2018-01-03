@@ -68,6 +68,12 @@ v0.4.7 / 2018-01-19
   * refactor: move internal logs to tj/aws
   * refactor platform integration quickly
 
+v0.4.6-pro / 2018-01-03
+=======================
+
+  * add rollback support
+
+
 v0.4.5-pro / 2018-01-03
 =======================
 
