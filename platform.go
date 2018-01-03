@@ -80,6 +80,9 @@ type Platform interface {
 	// region(s) configured by the user.
 	Deploy(Deploy) error
 
+	// Rollback to the given version.
+	Rollback(region, stage, version string) error
+
 	// Logs returns an interface for working
 	// with logging data.
 	Logs(LogsConfig) Logs
