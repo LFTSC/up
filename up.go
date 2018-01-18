@@ -129,11 +129,6 @@ func (p *Project) Deploy(d Deploy) error {
 	return nil
 }
 
-// Rollback the project.
-func (p *Project) Rollback(region, stage, version string) error {
-	return p.Platform.Rollback(region, stage, version)
-}
-
 // deploy stage.
 func (p *Project) deploy(d Deploy) error {
 	if err := p.RunHooks("predeploy", "deploy"); err != nil {
