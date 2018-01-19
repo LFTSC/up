@@ -55,6 +55,12 @@ v0.4.8 / 2018-01-24
   * docs: add missing ssm to policy
   * docs: add note about 404s
 
+v0.4.7-pro / 2018-01-19
+=======================
+
+  * add rollback support
+  * fix upgrade deduplication due to version having -pro suffix
+
 v0.4.7 / 2018-01-19
 ===================
 
