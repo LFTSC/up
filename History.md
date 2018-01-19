@@ -73,13 +73,11 @@ v0.4.6-pro / 2018-01-03
 
   * add rollback support
 
-
 v0.4.5-pro / 2018-01-03
 =======================
 
   * add s3 acceleration
   * fix a log call in runtime
-
 
 v0.4.6 / 2018-01-03
 ===================
