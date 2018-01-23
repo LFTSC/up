@@ -193,7 +193,11 @@ func (c *Config) Override(stage string) error {
 
 	s.Override(c)
 
-	return c.Validate()
+	if err := c.Lambda.Validate(); err != nil {
+		return errors.Wrap(err, ".lambda")
+	}
+
+	return nil
 }
 
 // inferRuntime performs inferences based on what Up thinks the runtime is.
