@@ -36,6 +36,11 @@ v0.4.11 / 2018-01-29
   * docs: remove old "Local Environment Variables" guide section
   * docs: add gin example for dev command
 
+v0.4.10-pro / 2018-01-25
+========================
+
+  * Rebase
+
 v0.4.10 / 2018-01-25
 ====================
 
