@@ -24,6 +24,11 @@ v0.4.12 / 2018-02-01
   * docs: add "Unable to associate certificate error" to troubleshooting
   * docs: add gin example
 
+v0.4.11-pro / 2018-01-29
+========================
+
+  * Rebase
+
 v0.4.11 / 2018-01-29
 ====================
 
