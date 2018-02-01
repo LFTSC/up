@@ -12,6 +12,11 @@ v0.5.0 / 2018-02-08
   * refactor retry labels below s3 uploads (improves performance)
   * refactor: add nicer output when using `up url -c`
 
+v0.4.12-pro / 2018-02-01
+========================
+
+  * Rebase
+
 v0.4.12 / 2018-02-01
 ====================
 
