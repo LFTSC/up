@@ -54,6 +54,7 @@ type Deploy struct {
 type Secret struct {
 	App              string
 	Name             string
+	Type             string
 	Stage            string
 	Value            string
 	Description      string
