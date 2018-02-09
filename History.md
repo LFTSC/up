@@ -1,4 +1,9 @@
 
+v0.5.1-pro / 2018-02-08
+=======================
+
+  * add `up env` --decrypt flag for emergencies when you need to list
+
 v0.5.0-pro / 2018-02-08
 =======================
 
