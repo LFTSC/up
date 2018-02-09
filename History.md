@@ -1,4 +1,13 @@
 
+v0.5.0-pro / 2018-02-08
+=======================
+
+  * add nicer env var logging with masking
+  * add custom stage support to `up env`
+  * add message for `up env` when no vars are defined
+  * fix rollbacks using -previous aliases
+  * Rebase
+
 v0.5.0 / 2018-02-08
 ===================
 
