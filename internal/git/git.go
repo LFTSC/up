@@ -3,9 +3,7 @@ package git
 
 import (
 	"bytes"
-	"os"
 	"os/exec"
-	"path/filepath"
 
 	"github.com/pkg/errors"
 )
@@ -19,9 +17,17 @@ var (
 
 // IsRepo returns true if dir is a git repo.
 func IsRepo(dir string) bool {
-	path := filepath.Join(dir, ".git")
-	_, err := os.Stat(path)
-	return !os.IsNotExist(err)
+	bin, err := exec.LookPath("git")
+	if err != nil {
+		return false
+	}
+
+	cmd := exec.Command(bin, "-C", dir, "status")
+	if err := cmd.Run(); err != nil {
+		return false
+	}
+
+	return cmd.ProcessState.Success()
 }
 
 // Describe returns the git tag or sha.
