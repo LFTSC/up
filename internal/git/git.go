@@ -38,25 +38,16 @@ func IsRepo(dir string) bool {
 func Describe(dir string) (string, error) {
 	cmd := exec.Command("git", "describe", "--abbrev=0", "--dirty=DIRTY")
 	cmd.Dir = dir
-
-	out, err := cmd.CombinedOutput()
-
-	if err == exec.ErrNotFound {
+	switch out, err := cmd.CombinedOutput(); {
+	case err == exec.ErrNotFound:
 		return "", ErrLookup
-	}
-
-	if err != nil {
+	case err != nil:
 		return "", errors.Wrap(err, "executing git-describe")
-	}
-
-	if isDirty(out) {
+	case bytes.Contains(out, []byte("exit status 128")):
+		return "", ErrNoRepo
+	case bytes.Contains(out, []byte("DIRTY")):
 		return "", ErrDirty
+	default:
+		return string(bytes.TrimSpace(out)), nil
 	}
-
-	return string(bytes.TrimSpace(out)), nil
-}
-
-// isDirty returns true if the DIRTY mark is present.
-func isDirty(b []byte) bool {
-	return bytes.Contains(b, []byte("DIRTY"))
 }
