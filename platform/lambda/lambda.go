@@ -164,7 +164,7 @@ func (p *Platform) Init(stage string) error {
 }
 
 // Deploy implementation.
-func (p *Platform) Deploy(stage string) error {
+func (p *Platform) Deploy(d up.Deploy) error {
 	regions := p.config.Regions
 	var g errgroup.Group
 
@@ -175,7 +175,7 @@ func (p *Platform) Deploy(stage string) error {
 	for _, r := range regions {
 		region := r
 		g.Go(func() error {
-			version, err := p.deploy(region, stage)
+			version, err := p.deploy(region, d)
 			if err == nil {
 				return nil
 			}
@@ -471,11 +471,12 @@ func (p *Platform) createCerts() error {
 }
 
 // deploy to the given region.
-func (p *Platform) deploy(region, stage string) (version string, err error) {
+func (p *Platform) deploy(region string, d up.Deploy) (version string, err error) {
 	start := time.Now()
 
 	fields := event.Fields{
-		"stage":  stage,
+		"commit": d.Commit,
+		"stage":  d.Stage,
 		"region": region,
 	}
 
@@ -500,7 +501,7 @@ func (p *Platform) deploy(region, stage string) (version string, err error) {
 
 	if util.IsNotFound(err) {
 		defer p.events.Time("platform.function.create", fields)
-		return p.createFunction(c, a, u, region, stage)
+		return p.createFunction(c, a, u, region, d.Stage)
 	}
 
 	if err != nil {
@@ -508,7 +509,7 @@ func (p *Platform) deploy(region, stage string) (version string, err error) {
 	}
 
 	defer p.events.Time("platform.function.update", fields)
-	return p.updateFunction(c, a, u, region, stage)
+	return p.updateFunction(c, a, u, region, d.Stage)
 }
 
 // createFunction creates the function.

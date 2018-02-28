@@ -8,6 +8,7 @@ import (
 	"github.com/tj/go/term"
 	"github.com/tj/kingpin"
 
+	"github.com/apex/up"
 	"github.com/apex/up/internal/cli/root"
 	"github.com/apex/up/internal/git"
 	"github.com/apex/up/internal/setup"
@@ -85,7 +86,10 @@ retry:
 		return errors.Wrap(err, "initializing")
 	}
 
-	if err := p.Deploy(stage); err != nil {
+	if err := p.Deploy(up.Deploy{
+		Stage:  stage,
+		Commit: commit,
+	}); err != nil {
 		return err
 	}
 
