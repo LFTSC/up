@@ -10,7 +10,8 @@ import (
 
 // Errors.
 var (
-	ErrDirty = errors.New("repo is dirty")
+	ErrDirty  = errors.New("repo is dirty")
+	ErrLookup = errors.New("git is not installed")
 )
 
 // IsRepo returns true if dir is a git repo.
@@ -34,7 +35,7 @@ func IsRepo(dir string) bool {
 func Describe(dir string) (string, error) {
 	bin, err := exec.LookPath("git")
 	if err != nil {
-		return "", errors.Wrap(err, "looking up git")
+		return "", ErrLookup
 	}
 
 	cmd := exec.Command(bin, "describe", "--abbrev=0", "--dirty=DIRTY")
