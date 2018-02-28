@@ -8,8 +8,6 @@ import (
 	"github.com/pkg/errors"
 )
 
-// TODO: lookup root?... may not always have ./.git
-
 // Errors.
 var (
 	ErrDirty = errors.New("repo is dirty")
