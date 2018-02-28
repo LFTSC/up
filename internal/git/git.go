@@ -41,7 +41,7 @@ func Describe(dir string) (string, error) {
 	switch out, err := cmd.CombinedOutput(); {
 	case err == exec.ErrNotFound:
 		return "", ErrLookup
-	case bytes.Contains(out, []byte("exit status 128")):
+	case bytes.Contains(out, []byte("Not a git repository")):
 		return "", ErrNoRepo
 	case bytes.Contains(out, []byte("DIRTY")):
 		return "", ErrDirty
