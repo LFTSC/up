@@ -8,6 +8,8 @@ import (
 	"github.com/pkg/errors"
 )
 
+// TODO: support git SHA... currently errors unless there's a tag
+
 // Errors.
 var (
 	ErrDirty  = errors.New("git repo is dirty")
@@ -44,7 +46,7 @@ func Describe(dir string) (string, error) {
 	case bytes.Contains(out, []byte("DIRTY")):
 		return "", ErrDirty
 	case err != nil:
-		return "", errors.Wrap(err, "executing git-describe")
+		return "", errors.Wrap(errors.New(string(out)), "executing git-describe")
 	default:
 		return string(bytes.TrimSpace(out)), nil
 	}
