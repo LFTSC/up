@@ -11,6 +11,7 @@ import (
 
 	"github.com/apex/up"
 	"github.com/apex/up/internal/cli/root"
+	"github.com/apex/up/internal/git"
 	"github.com/apex/up/internal/setup"
 	"github.com/apex/up/internal/stats"
 	"github.com/apex/up/internal/util"
