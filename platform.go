@@ -72,6 +72,12 @@ type Secrets interface {
 	Load() ([]*Secret, error)
 }
 
+// Deploy config.
+type Deploy struct {
+	Stage  string
+	Commit string
+}
+
 // Platform is the interface for platform integration,
 // defining the basic set of functionality required for
 // Up applications.
