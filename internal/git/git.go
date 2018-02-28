@@ -11,9 +11,7 @@ import (
 )
 
 // TODO: lookup root?... may not always have ./.git
-// TODO: better IsDirty ... exit status or git describe --dirty=DIRTY... refactor tag only...? option?
-// TODO: exchange Describe for tag...?
-// TODO: cache lookup
+// TODO: message?
 
 // Errors.
 var (
