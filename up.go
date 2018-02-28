@@ -109,7 +109,10 @@ func (p *Project) Build() error {
 
 // Deploy the project.
 func (p *Project) Deploy(d Deploy) error {
-	defer p.events.Time("deploy", nil)()
+	defer p.events.Time("deploy", event.Fields{
+		"commit": d.Commit,
+		"stage":  d.Stage,
+	})()
 
 	if err := p.Build(); err != nil {
 		return errors.Wrap(err, "building")
