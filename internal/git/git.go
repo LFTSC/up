@@ -8,8 +8,6 @@ import (
 	"github.com/pkg/errors"
 )
 
-// TODO: ExitError
-
 // Errors.
 var (
 	ErrDirty  = errors.New("git repo is dirty")
