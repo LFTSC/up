@@ -41,12 +41,12 @@ func Describe(dir string) (string, error) {
 	switch out, err := cmd.CombinedOutput(); {
 	case err == exec.ErrNotFound:
 		return "", ErrLookup
-	case err != nil:
-		return "", errors.Wrap(err, "executing git-describe")
 	case bytes.Contains(out, []byte("exit status 128")):
 		return "", ErrNoRepo
 	case bytes.Contains(out, []byte("DIRTY")):
 		return "", ErrDirty
+	case err != nil:
+		return "", errors.Wrap(err, "executing git-describe")
 	default:
 		return string(bytes.TrimSpace(out)), nil
 	}
