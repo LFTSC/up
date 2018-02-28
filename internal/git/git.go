@@ -8,9 +8,12 @@ import (
 	"github.com/pkg/errors"
 )
 
+// TODO: ExitError
+
 // Errors.
 var (
-	ErrDirty  = errors.New("repo is dirty")
+	ErrDirty  = errors.New("git repo is dirty")
+	ErrNoRepo = errors.New("git repo not found")
 	ErrLookup = errors.New("git is not installed")
 )
 
