@@ -36,15 +36,15 @@ func IsRepo(dir string) bool {
 
 // Describe returns the git tag or sha.
 func Describe(dir string) (string, error) {
-	bin, err := exec.LookPath("git")
-	if err != nil {
-		return "", ErrLookup
-	}
-
-	cmd := exec.Command(bin, "describe", "--abbrev=0", "--dirty=DIRTY")
+	cmd := exec.Command("git", "describe", "--abbrev=0", "--dirty=DIRTY")
 	cmd.Dir = dir
 
 	out, err := cmd.CombinedOutput()
+
+	if err == exec.ErrNotFound {
+		return "", ErrLookup
+	}
+
 	if err != nil {
 		return "", errors.Wrap(err, "executing git-describe")
 	}
