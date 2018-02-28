@@ -36,7 +36,7 @@ func IsRepo(dir string) bool {
 
 // Describe returns the git tag or sha.
 func Describe(dir string) (string, error) {
-	cmd := exec.Command("git", "describe", "--abbrev=0", "--dirty=DIRTY")
+	cmd := exec.Command("git", "describe", "--tags", "--abbrev=0", "--dirty=DIRTY")
 	cmd.Dir = dir
 	switch out, err := cmd.CombinedOutput(); {
 	case err == exec.ErrNotFound:
