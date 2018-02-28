@@ -11,7 +11,6 @@ import (
 )
 
 // TODO: lookup root?... may not always have ./.git
-// TODO: message?
 
 // Errors.
 var (
