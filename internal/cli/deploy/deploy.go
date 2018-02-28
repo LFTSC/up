@@ -67,10 +67,11 @@ retry:
 		return errors.Wrap(err, "overriding")
 	}
 
-	// git describe
+	// git describe, ignoring when git/repo are not present
 	commit, err := git.Describe(".")
 	switch {
 	case err == git.ErrLookup:
+	case err == git.ErrNoRepo:
 	case err == git.ErrDirty:
 		return errors.New("git repo is dirty")
 	case err != nil:
