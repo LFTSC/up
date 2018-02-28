@@ -43,7 +43,7 @@ func Describe(dir string) (string, error) {
 
 	out, err := cmd.CombinedOutput()
 	if err != nil {
-		return "", errors.Wrap(err, "executing")
+		return "", errors.Wrap(err, "executing git-describe")
 	}
 
 	if isDirty(out) {

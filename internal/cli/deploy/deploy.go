@@ -9,6 +9,7 @@ import (
 	"github.com/tj/kingpin"
 
 	"github.com/apex/up/internal/cli/root"
+	"github.com/apex/up/internal/git"
 	"github.com/apex/up/internal/setup"
 	"github.com/apex/up/internal/stats"
 	"github.com/apex/up/internal/util"
@@ -64,6 +65,16 @@ retry:
 	// stage overrides
 	if err := c.Override(stage); err != nil {
 		return errors.Wrap(err, "overriding")
+	}
+
+	// git describe
+	commit, err := git.Describe(".")
+	switch {
+	case err == git.ErrLookup:
+	case err == git.ErrDirty:
+		return errors.New("git repo is dirty")
+	case err != nil:
+		return errors.Wrap(err, "fetching git tag or sha")
 	}
 
 	defer util.Pad()()
