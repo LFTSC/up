@@ -474,6 +474,16 @@ func IsCI() bool {
 	return os.Getenv("CI") == "true"
 }
 
+// EnvironMap returns environment as a map.
+func EnvironMap() map[string]string {
+	m := make(map[string]string)
+	for _, s := range os.Environ() {
+		p := strings.SplitN(s, "=", 2)
+		m[p[0]] = p[1]
+	}
+	return m
+}
+
 // EncodeAlias encodes an alias string so that it conforms to the
 // requirement of matching (?!^[0-9]+$)([a-zA-Z0-9-_]+).
 func EncodeAlias(s string) string {
