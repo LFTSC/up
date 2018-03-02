@@ -123,3 +123,13 @@ func TestEncodeAlias(t *testing.T) {
 func TestDecodeAlias(t *testing.T) {
 	assert.Equal(t, `v1.2.3-beta`, DecodeAlias(EncodeAlias(`v1.2.3-beta`)))
 }
+
+func TestEnvironMap(t *testing.T) {
+	env := EnvironMap()
+
+	_, ok := env["HOME"]
+	assert.True(t, ok)
+
+	_, ok = env["PATH"]
+	assert.True(t, ok)
+}
