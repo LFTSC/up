@@ -671,6 +671,7 @@ func (p *Platform) updateFunction(c *lambda.Lambda, a *apigateway.APIGateway, up
 		return "", errors.Wrap(err, "fetching current version")
 	}
 
+	// create stage alias
 	if err := p.alias(c, stage, *res.Version); err != nil {
 		return "", errors.Wrapf(err, "creating function %q alias", stage)
 	}
