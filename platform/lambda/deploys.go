@@ -1,14 +1,16 @@
 package lambda
 
 import (
-	"encoding/json"
-	"os"
+	"fmt"
+	"sort"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/lambda"
 	"github.com/pkg/errors"
 )
+
+// TODO: parallelize?
 
 // ShowDeploys implementation.
 func (p *Platform) ShowDeploys(region string) error {
@@ -25,11 +27,14 @@ func (p *Platform) ShowDeploys(region string) error {
 	// 	return errors.Wrap(err, "fetching aliases")
 	// }
 
+	sortVersionsDesc(versions)
+
 	for _, v := range versions {
-		{
-			enc := json.NewEncoder(os.Stderr)
-			enc.SetIndent("", "  ")
-			enc.Encode(v)
+		stage := *v.Environment.Variables["UP_STAGE"]
+		commit := v.Environment.Variables["UP_COMMIT"]
+		version := *v.Version
+		if commit != nil {
+			fmt.Printf("%s -> %s (%s)\n", stage, *commit, version)
 		}
 	}
 
@@ -89,4 +94,13 @@ func getVersions(c *lambda.Lambda, name string) (versions []*lambda.FunctionConf
 	}
 
 	return
+}
+
+// sortVersionsDesc sorts versions descending.
+func sortVersionsDesc(versions []*lambda.FunctionConfiguration) {
+	sort.Slice(versions, func(i int, j int) bool {
+		a := *versions[i].Version
+		b := *versions[j].Version
+		return a > b
+	})
 }
