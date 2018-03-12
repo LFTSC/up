@@ -673,7 +673,14 @@ func (p *Platform) updateFunction(c *lambda.Lambda, a *apigateway.APIGateway, up
 
 	// create stage alias
 	if err := p.alias(c, d.Stage, *res.Version); err != nil {
-		return "", errors.Wrapf(err, "creating function %q alias", d.Stage)
+		return "", errors.Wrapf(err, "creating function stage %q alias", d.Stage)
+	}
+
+	// create git alias
+	if d.Commit != "" {
+		if err := p.alias(c, d.Commit, *res.Version); err != nil {
+			return "", errors.Wrapf(err, "creating function git %q alias", d.Commit)
+		}
 	}
 
 	if err := p.alias(c, previous(stage), curr); err != nil {
