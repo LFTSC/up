@@ -26,11 +26,6 @@ func (p *Platform) ShowDeploys(region string) error {
 		return errors.Wrap(err, "fetching versions")
 	}
 
-	// aliases, err := getAliases(c, p.config.Name)
-	// if err != nil {
-	// 	return errors.Wrap(err, "fetching aliases")
-	// }
-
 	sortVersionsDesc(versions)
 	defer util.Pad()()
 
@@ -50,44 +45,17 @@ func showFunction(f *lambda.FunctionConfiguration) {
 	commit := f.Environment.Variables["UP_COMMIT"]
 	stage := *f.Environment.Variables["UP_STAGE"]
 	created := dateparse.MustParse(*f.LastModified)
+	date := formatDate(created)
 	version := *f.Version
-
-	t := humanize.RelTime(time.Now(), created, "from now", "ago")
 
 	// no git commit
 	if commit == nil || *commit == "" {
-		fmt.Printf("  %15s -> %s %s\n", stage, version, t)
+		fmt.Printf("  %15s -> %s %s\n", stage, version, date)
 		return
 	}
 
 	// git commit
-	fmt.Printf("  %15s -> %s (%s) %s\n", stage, *commit, version, t)
-}
-
-// getAliases returns all function aliases.
-func getAliases(c *lambda.Lambda, name string) (aliases []*lambda.AliasConfiguration, err error) {
-	var marker *string
-
-	for {
-		res, err := c.ListAliases(&lambda.ListAliasesInput{
-			FunctionName: &name,
-			Marker:       marker,
-			MaxItems:     aws.Int64(5000),
-		})
-
-		if err != nil {
-			return nil, err
-		}
-
-		aliases = append(aliases, res.Aliases...)
-
-		marker = res.NextMarker
-		if marker == nil {
-			break
-		}
-	}
-
-	return
+	fmt.Printf("  %15s -> %s (%s) %s\n", stage, *commit, version, date)
 }
 
 // getVersions returns all function versions.
@@ -122,4 +90,16 @@ func sortVersionsDesc(versions []*lambda.FunctionConfiguration) {
 		b := *versions[j].Version
 		return a > b
 	})
+}
+
+// formatDate formats t relative to now.
+func formatDate(t time.Time) string {
+	switch d := time.Since(t); {
+	case d <= 12*time.Hour:
+		return humanize.RelTime(time.Now(), t, "from now", "ago")
+	case d <= 24*time.Hour:
+		return t.Format(`2` + util.DateSuffix(t) + ` 03:04:05pm`)
+	default:
+		return t.Format(`Jan 2` + util.DateSuffix(t) + ` 03:04:05pm`)
+	}
 }
