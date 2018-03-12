@@ -116,6 +116,7 @@ type Platform interface {
 	ApplyStack(region string) error
 
 	ShowMetrics(region, stage string, start time.Time) error
+	ShowDeploys(region) error
 }
 
 // Runtime is the interface used by a platform to support
