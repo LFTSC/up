@@ -69,7 +69,7 @@ retry:
 	}
 
 	// git information
-	commit, author, err := getCommit()
+	commit, author, err := getRepoInfo()
 	if err != nil {
 		return errors.Wrap(err, "fetching git tag or sha")
 	}
@@ -102,15 +102,12 @@ retry:
 		"dns_zone_count":       len(c.DNS.Zones),
 		"stage_count":          len(c.Stages.List()),
 		"stage_domain_count":   len(c.Stages.Domains()),
-		"lambda_accelerate":    c.Lambda.Accelerate,
 		"lambda_memory":        c.Lambda.Memory,
 		"has_cors":             c.CORS != nil,
 		"has_logs":             !c.Logs.Disable,
 		"has_profile":          c.Profile != "",
 		"has_error_pages":      !c.ErrorPages.Disable,
 		"app_name_hash":        util.Md5(c.Name),
-		"alerts_count":         len(c.Alerts),
-		"actions_count":        len(c.Actions),
 		"is_git":               author != "",
 	})
 
@@ -125,20 +122,27 @@ func isMissingConfig(err error) bool {
 	return ok && e.Path == "up.json"
 }
 
-// getCommit returns the git commit when available.
-func getCommit() (string, error) {
-	s, err := git.Describe(".")
-
-	switch {
-	case err == git.ErrLookup:
-	case err == git.ErrNoRepo:
-	case err == git.ErrDirty:
-		// we ignore these cases for now, as it would backwards incompatible
-		// to require the GIT repo state, and make catch people off-gaurd
-		return "", nil
-	case err != nil:
-		return "", err
+// getRepoInfo returns the git information when available.
+func getRepoInfo() (commit, author string, err error) {
+	commit, err = git.Describe(".")
+	if err != nil && !isIgnorable(err) {
+		return "", "", err
 	}
 
-	return s, nil
+	author, err = git.Author(".")
+	if err != nil && !isIgnorable(err) {
+		return "", "", err
+	}
+
+	return commit, author, nil
+}
+
+// isIgnorable returns true if the GIT error is ignorable.
+func isIgnorable(err error) bool {
+	switch err {
+	case git.ErrLookup, git.ErrNoRepo, git.ErrDirty:
+		return true
+	default:
+		return false
+	}
 }

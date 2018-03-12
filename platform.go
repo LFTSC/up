@@ -47,6 +47,7 @@ type Domains interface {
 type Deploy struct {
 	Stage  string
 	Commit string
+	Author string
 }
 
 // Platform is the interface for platform integration,
