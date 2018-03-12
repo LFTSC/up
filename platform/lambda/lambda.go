@@ -513,14 +513,14 @@ func (p *Platform) deploy(region string, d up.Deploy) (version string, err error
 }
 
 // createFunction creates the function.
-func (p *Platform) createFunction(c *lambda.Lambda, a *apigateway.APIGateway, up *s3manager.Uploader, region, stage string) (version string, err error) {
+func (p *Platform) createFunction(c *lambda.Lambda, a *apigateway.APIGateway, up *s3manager.Uploader, region string, d up.Deploy) (version string, err error) {
 	if err := p.createBucket(region); err != nil && !util.IsBucketExists(err) {
 		return "", errors.Wrap(err, "creating s3 bucket")
 	}
 
 	log.Debug("uploading function")
 	b := aws.String(p.getS3BucketName(region))
-	k := aws.String(p.getS3Key(stage))
+	k := aws.String(p.getS3Key(d.Stage))
 
 	_, err = up.Upload(&s3manager.UploadInput{
 		Bucket: b,
@@ -542,7 +542,7 @@ retry:
 		MemorySize:   aws.Int64(int64(p.config.Lambda.Memory)),
 		Timeout:      aws.Int64(int64(p.config.Proxy.Timeout + 3)),
 		Publish:      aws.Bool(true),
-		Environment:  toEnv(p.config.Environment, stage),
+		Environment:  toEnv(p.config.Environment, d.Stage),
 		Code: &lambda.FunctionCode{
 			S3Bucket: b,
 			S3Key:    k,
@@ -564,9 +564,9 @@ retry:
 }
 
 // updateFunction updates the function.
-func (p *Platform) updateFunction(c *lambda.Lambda, a *apigateway.APIGateway, up *s3manager.Uploader, region, stage string) (version string, err error) {
+func (p *Platform) updateFunction(c *lambda.Lambda, a *apigateway.APIGateway, up *s3manager.Uploader, region string, d up.Deploy) (version string, err error) {
 	b := aws.String(p.getS3BucketName(region))
-	k := aws.String(p.getS3Key(stage))
+	k := aws.String(p.getS3Key(d.Stage))
 
 	// upload
 	log.Debug("uploading function")
@@ -597,7 +597,7 @@ func (p *Platform) updateFunction(c *lambda.Lambda, a *apigateway.APIGateway, up
 		Role:         &p.config.Lambda.Role,
 		MemorySize:   aws.Int64(int64(p.config.Lambda.Memory)),
 		Timeout:      aws.Int64(int64(p.config.Proxy.Timeout + 3)),
-		Environment:  toEnv(p.config.Environment, stage),
+		Environment:  toEnv(p.config.Environment, d.Stage),
 	})
 
 	if err != nil {
@@ -618,8 +618,8 @@ func (p *Platform) updateFunction(c *lambda.Lambda, a *apigateway.APIGateway, up
 	}
 
 	// create stage alias
-	if err := p.alias(c, stage, *res.Version); err != nil {
-		return "", errors.Wrapf(err, "creating function %q alias", stage)
+	if err := p.alias(c, d.Stage, *res.Version); err != nil {
+		return "", errors.Wrapf(err, "creating function %q alias", d.Stage)
 	}
 
 	return *res.Version, nil
