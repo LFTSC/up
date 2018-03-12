@@ -624,7 +624,7 @@ func (p *Platform) updateFunction(c *lambda.Lambda, a *apigateway.APIGateway, up
 
 	// create git alias
 	if d.Commit != "" {
-		if err := p.alias(c, d.Commit, *res.Version); err != nil {
+		if err := p.alias(c, util.EncodeAlias(d.Commit), *res.Version); err != nil {
 			return "", errors.Wrapf(err, "creating function git %q alias", d.Commit)
 		}
 	}
