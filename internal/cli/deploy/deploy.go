@@ -74,7 +74,8 @@ retry:
 	case err == git.ErrLookup:
 	case err == git.ErrNoRepo:
 	case err == git.ErrDirty:
-		return errors.New("git repo is dirty")
+		// we ignore these cases for now, as it would backwards incompatible
+		// to require the GIT repo state, and make catch people off-gaurd
 	case err != nil:
 		return errors.Wrap(err, "fetching git tag or sha")
 	}
