@@ -568,6 +568,7 @@ func (p *Platform) updateFunction(c *lambda.Lambda, a *apigateway.APIGateway, up
 	b := aws.String(p.getS3BucketName(region))
 	k := aws.String(p.getS3Key(stage))
 
+	// upload
 	log.Debug("uploading function")
 	_, err = up.Upload(&s3manager.UploadInput{
 		Bucket: b,
@@ -575,6 +576,7 @@ func (p *Platform) updateFunction(c *lambda.Lambda, a *apigateway.APIGateway, up
 		Body:   bytes.NewReader(p.zip.Bytes()),
 	})
 
+	// ensure bucket exists
 	if util.IsNotFound(err) {
 		if err := p.createBucket(region); err != nil {
 			return "", errors.Wrap(err, "creating s3 bucket")
@@ -586,6 +588,7 @@ func (p *Platform) updateFunction(c *lambda.Lambda, a *apigateway.APIGateway, up
 		return "", errors.Wrap(err, "uploading function")
 	}
 
+	// update function config
 	log.Debug("updating function")
 	_, err = c.UpdateFunctionConfiguration(&lambda.UpdateFunctionConfigurationInput{
 		FunctionName: &p.config.Name,
@@ -601,6 +604,7 @@ func (p *Platform) updateFunction(c *lambda.Lambda, a *apigateway.APIGateway, up
 		return "", errors.Wrap(err, "updating function config")
 	}
 
+	// update function code
 	log.Debug("updating function code")
 	res, err := c.UpdateFunctionCode(&lambda.UpdateFunctionCodeInput{
 		FunctionName: &p.config.Name,
@@ -613,6 +617,7 @@ func (p *Platform) updateFunction(c *lambda.Lambda, a *apigateway.APIGateway, up
 		return "", errors.Wrap(err, "updating function code")
 	}
 
+	// create stage alias
 	if err := p.alias(c, stage, *res.Version); err != nil {
 		return "", errors.Wrapf(err, "creating function %q alias", stage)
 	}
