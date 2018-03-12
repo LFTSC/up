@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/dustin/go-humanize"
 	"github.com/pkg/errors"
 	"github.com/tj/kingpin"
 
@@ -209,7 +208,7 @@ func remove(cmd *kingpin.Cmd) {
 // rows helper.
 func rows(t *table.Table, secrets []*up.Secret) {
 	for _, s := range secrets {
-		mod := fmt.Sprintf("Modified %s", humanize.Time(s.LastModified))
+		mod := fmt.Sprintf("Modified %s", util.RelativeDate(s.LastModified))
 		if u := s.LastModifiedUser; u != "" {
 			mod += fmt.Sprintf(" by %s", u)
 		}

@@ -3,7 +3,6 @@ package lambda
 import (
 	"sort"
 	"strconv"
-	"time"
 
 	"github.com/apex/up/internal/colors"
 	"github.com/apex/up/internal/table"
@@ -12,7 +11,6 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/lambda"
-	"github.com/dustin/go-humanize"
 	"github.com/pkg/errors"
 )
 
@@ -60,7 +58,7 @@ func addFunction(t *table.Table, f *lambda.FunctionConfiguration) {
 	commit := f.Environment.Variables["UP_COMMIT"]
 	stage := *f.Environment.Variables["UP_STAGE"]
 	created := dateparse.MustParse(*f.LastModified)
-	date := formatDate(created)
+	date := util.RelativeDate(created)
 	version := *f.Version
 
 	t.AddRow(table.Row{
@@ -133,16 +131,4 @@ func mustParseInt(s string) int64 {
 		panic(errors.Wrapf(err, "parsing integer string %v", s))
 	}
 	return n
-}
-
-// formatDate formats t relative to now.
-func formatDate(t time.Time) string {
-	switch d := time.Since(t); {
-	case d <= 12*time.Hour:
-		return humanize.RelTime(time.Now(), t, "from now", "ago")
-	case d <= 24*time.Hour:
-		return t.Format(`Today at 03:04:05pm`)
-	default:
-		return t.Format(`Jan 2` + util.DateSuffix(t) + ` 03:04:05pm`)
-	}
 }

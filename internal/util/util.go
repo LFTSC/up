@@ -21,6 +21,7 @@ import (
 	"time"
 
 	"github.com/apex/up/internal/colors"
+	humanize "github.com/dustin/go-humanize"
 	"github.com/pascaldekloe/name"
 	"github.com/pkg/errors"
 	"github.com/tj/backoff"
@@ -549,5 +550,17 @@ func DateSuffix(t time.Time) string {
 		return "rd"
 	default:
 		return "th"
+	}
+}
+
+// RelativeDate returns a date formatted relative to now.
+func RelativeDate(t time.Time) string {
+	switch d := time.Since(t); {
+	case d <= 12*time.Hour:
+		return humanize.RelTime(time.Now(), t, "from now", "ago")
+	case d <= 24*time.Hour:
+		return t.Format(`Today at 03:04:05pm`)
+	default:
+		return t.Format(`Jan 2` + DateSuffix(t) + ` 03:04:05pm`)
 	}
 }
