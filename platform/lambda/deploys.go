@@ -49,21 +49,9 @@ func addFunction(t *table.Table, f *lambda.FunctionConfiguration) {
 	date := formatDate(created)
 	version := *f.Version
 
-	// no git commit
-	if commit == nil || *commit == "" {
-		t.AddRow(table.Row{
-			{Text: stage},
-			{Text: ""},
-			{Text: version},
-			{Text: date},
-		})
-		return
-	}
-
-	// git commit
 	t.AddRow(table.Row{
 		{Text: stage},
-		{Text: *commit},
+		{Text: util.DefaultString(commit, "–")},
 		{Text: version},
 		{Text: date},
 	})
