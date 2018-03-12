@@ -5,6 +5,7 @@ import (
 	"sort"
 
 	"github.com/apex/up/internal/util"
+	"github.com/araddon/dateparse"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/lambda"
@@ -46,7 +47,7 @@ func (p *Platform) ShowDeploys(region string) error {
 func showFunction(f *lambda.FunctionConfiguration) {
 	commit := f.Environment.Variables["UP_COMMIT"]
 	stage := *f.Environment.Variables["UP_STAGE"]
-	created := *f.LastModified
+	created := dateparse.MustParse(*f.LastModified)
 	version := *f.Version
 
 	// no git commit
