@@ -1,9 +1,9 @@
 package lambda
 
 import (
-	"strings"
+	"encoding/json"
+	"os"
 
-	"github.com/apex/up/platform/event"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/lambda"
@@ -15,33 +15,29 @@ func (p *Platform) ShowDeploys(region string) error {
 	s := session.New(aws.NewConfig().WithRegion(region))
 	c := lambda.New(s)
 
-	c.ListVersionsByFunction(input)
-
-	aliases, err := getAliases(c, p.config.Name)
+	versions, err := getVersions(c, p.config.Name)
 	if err != nil {
-		return errors.Wrap(err, "fetching aliases")
+		return errors.Wrap(err, "fetching versions")
 	}
 
-	aliases = filterPrevious(aliases)
+	// aliases, err := getAliases(c, p.config.Name)
+	// if err != nil {
+	// 	return errors.Wrap(err, "fetching aliases")
+	// }
 
-	p.events.Emit("platform.deploys", event.Fields{
-		"aliases": aliases,
-	})
+	for _, v := range versions {
+		{
+			enc := json.NewEncoder(os.Stderr)
+			enc.SetIndent("", "  ")
+			enc.Encode(v)
+		}
+	}
+
+	// p.events.Emit("platform.deploys", event.Fields{
+	// 	"aliases": aliases,
+	// })
 
 	return nil
-}
-
-// filterPrevious returns aliases filtered of "previous" aliases for rollbacks.
-func filterPrevious(aliases []*lambda.AliasConfiguration) (filtered []*lambda.AliasConfiguration) {
-	for _, a := range aliases {
-		if strings.Contains(*a.Name, "-previous") {
-			continue
-		}
-
-		filtered = append(filtered, a)
-	}
-
-	return
 }
 
 // getAliases returns all function aliases.
