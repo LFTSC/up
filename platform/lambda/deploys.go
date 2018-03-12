@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"sort"
 
+	"github.com/apex/up/internal/util"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/lambda"
@@ -28,13 +29,14 @@ func (p *Platform) ShowDeploys(region string) error {
 	// }
 
 	sortVersionsDesc(versions)
+	defer util.Pad()()
 
 	for _, v := range versions {
 		stage := *v.Environment.Variables["UP_STAGE"]
 		commit := v.Environment.Variables["UP_COMMIT"]
 		version := *v.Version
 		if commit != nil {
-			fmt.Printf("%s -> %s (%s)\n", stage, *commit, version)
+			fmt.Printf("  %s -> %s (%s)\n", stage, *commit, version)
 		}
 	}
 
