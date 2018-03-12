@@ -40,8 +40,10 @@ func (p *Platform) ShowDeploys(region string) error {
 
 		stage := *v.Environment.Variables["UP_STAGE"]
 		commit := v.Environment.Variables["UP_COMMIT"]
+		created := *v.LastModified
+
 		if commit != nil {
-			fmt.Printf("  %s -> %s (%s)\n", stage, *commit, version)
+			fmt.Printf("  %15s -> %s (%s) %s\n", stage, *commit, version, created)
 		}
 	}
 
