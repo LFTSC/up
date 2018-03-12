@@ -31,7 +31,7 @@ func (p *Platform) ShowDeploys(region string) error {
 	t.AddRow(table.Row{
 		{Text: colors.Bold("Stage")},
 		{Text: colors.Bold("Version")},
-		{Text: colors.Bold("Lambda")},
+		{Text: colors.Bold("Function")},
 		{Text: colors.Bold("Date")},
 	})
 
