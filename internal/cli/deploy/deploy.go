@@ -69,16 +69,11 @@ retry:
 	}
 
 	// git describe, ignoring when git/repo are not present
-	commit, err := git.Describe(".")
-	switch {
-	case err == git.ErrLookup:
-	case err == git.ErrNoRepo:
-	case err == git.ErrDirty:
-		// we ignore these cases for now, as it would backwards incompatible
-		// to require the GIT repo state, and make catch people off-gaurd
-	case err != nil:
+	commit, err := getCommit()
+	if err != nil {
 		return errors.Wrap(err, "fetching git tag or sha")
 	}
+	commit = util.EncodeAlias(commit)
 
 	defer util.Pad()()
 	start := time.Now()
@@ -123,4 +118,22 @@ func isMissingConfig(err error) bool {
 	err = errors.Cause(err)
 	e, ok := err.(*os.PathError)
 	return ok && e.Path == "up.json"
+}
+
+// getCommit returns the git commit when available.
+func getCommit() (string, error) {
+	s, err := git.Describe(".")
+
+	switch {
+	case err == git.ErrLookup:
+	case err == git.ErrNoRepo:
+	case err == git.ErrDirty:
+		// we ignore these cases for now, as it would backwards incompatible
+		// to require the GIT repo state, and make catch people off-gaurd
+		return "", nil
+	case err != nil:
+		return "", err
+	}
+
+	return util.EncodeAlias(s), nil
 }
