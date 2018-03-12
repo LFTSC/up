@@ -13,6 +13,7 @@ import (
 	_ "github.com/apex/up/internal/cli/build"
 	_ "github.com/apex/up/internal/cli/config"
 	_ "github.com/apex/up/internal/cli/deploy"
+	_ "github.com/apex/up/internal/cli/deploys"
 	_ "github.com/apex/up/internal/cli/docs"
 	_ "github.com/apex/up/internal/cli/domains"
 	_ "github.com/apex/up/internal/cli/env"
