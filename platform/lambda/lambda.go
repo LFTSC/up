@@ -579,14 +579,13 @@ func (p *Platform) updateFunction(c *lambda.Lambda, a *apigateway.APIGateway, up
 		if err := p.createBucket(region); err != nil {
 			return "", errors.Wrap(err, "creating s3 bucket")
 		}
-		goto retry
+		err = nil
 	}
 
 	if err != nil {
 		return "", errors.Wrap(err, "uploading function")
 	}
 
-retry:
 	log.Debug("updating function")
 	_, err = c.UpdateFunctionConfiguration(&lambda.UpdateFunctionConfigurationInput{
 		FunctionName: &p.config.Name,
