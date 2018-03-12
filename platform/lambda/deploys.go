@@ -1,10 +1,9 @@
 package lambda
 
 import (
-	"encoding/json"
-	"os"
 	"sort"
 
+	"github.com/apex/up/platform/event"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/lambda"
@@ -21,17 +20,9 @@ func (p *Platform) ShowDeploys(region string) error {
 		return errors.Wrap(err, "fetching aliases")
 	}
 
-	{
-		enc := json.NewEncoder(os.Stderr)
-		enc.SetIndent("", "  ")
-		enc.Encode(aliases)
-	}
-
-	// 		p.events.Emit("metrics.value", event.Fields{
-	// 		"name":   s.Name,
-	// 		"value":  s.Value(),
-	// 		"memory": p.config.Lambda.Memory,
-	// 	})
+	p.events.Emit("platform.deploys", event.Fields{
+		"aliases": aliases,
+	})
 
 	return nil
 }
