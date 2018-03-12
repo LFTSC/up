@@ -455,3 +455,17 @@ func UniqueStrings(s []string) (v []string) {
 func IsCI() bool {
 	return os.Getenv("CI") == "true"
 }
+
+// EncodeAlias encodes an alias string so that it conforms to the
+// requirement of matching (?!^[0-9]+$)([a-zA-Z0-9-_]+).
+func EncodeAlias(s string) string {
+	s = strings.Replace(s, ".", "_", -1)
+	return s
+}
+
+// DecodeAlias decodes an alias string which was encoded by
+// the EncodeAlias function.
+func DecodeAlias(s string) string {
+	s = strings.Replace(s, "_", ".", -1)
+	return s
+}
