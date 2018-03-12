@@ -3,7 +3,6 @@ package stack
 
 import (
 	"encoding/json"
-	"os"
 	"strings"
 	"time"
 
@@ -412,36 +411,6 @@ func (s *Stack) showVersion(stage *config.Stage) error {
 		"domain":  stage.Domain,
 		"version": *res.FunctionVersion,
 	})
-
-	return s.showVersionAliases(stage, *res.FunctionVersion)
-}
-
-// showVersionAliases emits events for showing the Lambda version aliases.
-func (s *Stack) showVersionAliases(stage *config.Stage, version string) error {
-	res, err := s.lambda.ListAliases(&lambda.ListAliasesInput{
-		FunctionName:    &s.config.Name,
-		FunctionVersion: &version,
-		MaxItems:        aws.Int64(50),
-	})
-
-	if err != nil {
-		return errors.Wrap(err, "fetching version aliases")
-	}
-
-	{
-		enc := json.NewEncoder(os.Stderr)
-		enc.SetIndent("", "  ")
-		enc.Encode(res.Aliases)
-	}
-
-	for _, a := range res.Aliases {
-		s.events.Emit("platform.stack.show.version.alias", event.Fields{
-			"domain":      stage.Domain,
-			"version":     version,
-			"name":        *a.Name,
-			"description": *a.Description,
-		})
-	}
 
 	return nil
 }
