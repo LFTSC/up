@@ -68,8 +68,8 @@ retry:
 		return errors.Wrap(err, "overriding")
 	}
 
-	// git describe, ignoring when git/repo are not present
-	commit, err := getCommit()
+	// git information
+	commit, author, err := getCommit()
 	if err != nil {
 		return errors.Wrap(err, "fetching git tag or sha")
 	}
@@ -84,6 +84,7 @@ retry:
 	if err := p.Deploy(up.Deploy{
 		Stage:  stage,
 		Commit: commit,
+		Author: author,
 	}); err != nil {
 		return err
 	}
@@ -101,11 +102,16 @@ retry:
 		"dns_zone_count":       len(c.DNS.Zones),
 		"stage_count":          len(c.Stages.List()),
 		"stage_domain_count":   len(c.Stages.Domains()),
+		"lambda_accelerate":    c.Lambda.Accelerate,
+		"lambda_memory":        c.Lambda.Memory,
 		"has_cors":             c.CORS != nil,
 		"has_logs":             !c.Logs.Disable,
 		"has_profile":          c.Profile != "",
 		"has_error_pages":      !c.ErrorPages.Disable,
 		"app_name_hash":        util.Md5(c.Name),
+		"alerts_count":         len(c.Alerts),
+		"actions_count":        len(c.Actions),
+		"is_git":               author != "",
 	})
 
 	stats.Flush()
@@ -134,5 +140,5 @@ func getCommit() (string, error) {
 		return "", err
 	}
 
-	return util.EncodeAlias(s), nil
+	return s, nil
 }
