@@ -38,6 +38,18 @@ func IsRepo(dir string) bool {
 func Describe(dir string) (string, error) {
 	cmd := exec.Command("git", "describe", "--tags", "--abbrev=0", "--dirty=DIRTY")
 	cmd.Dir = dir
+	return output(cmd)
+}
+
+// Author returns the author of HEAD.
+func Author(dir string) (string, error) {
+	cmd := exec.Command("git", "log", "-1", "--pretty=format:%an")
+	cmd.Dir = dir
+	return output(cmd)
+}
+
+// output returns GIT command output with error normalization.
+func output(cmd *exec.Cmd) (string, error) {
 	switch out, err := cmd.CombinedOutput(); {
 	case err == exec.ErrNotFound:
 		return "", ErrLookup
@@ -46,7 +58,7 @@ func Describe(dir string) (string, error) {
 	case bytes.Contains(out, []byte("DIRTY")):
 		return "", ErrDirty
 	case err != nil:
-		return "", errors.Wrap(errors.New(string(out)), "executing git-describe")
+		return "", errors.New(string(out))
 	default:
 		return string(bytes.TrimSpace(out)), nil
 	}

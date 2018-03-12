@@ -17,3 +17,9 @@ func TestDescribe(t *testing.T) {
 	assert.EqualError(t, err, `git repo not found`)
 	assert.Empty(t, s)
 }
+
+func TestAuthor(t *testing.T) {
+	s, err := git.Author(".")
+	assert.NoError(t, err)
+	assert.Equal(t, "TJ Holowaychuk", s)
+}
