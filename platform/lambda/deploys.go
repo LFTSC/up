@@ -14,8 +14,6 @@ import (
 	"github.com/pkg/errors"
 )
 
-// TODO: parallelize?
-
 // ShowDeploys implementation.
 func (p *Platform) ShowDeploys(region string) error {
 	s := session.New(aws.NewConfig().WithRegion(region))
