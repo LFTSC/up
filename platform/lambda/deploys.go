@@ -106,7 +106,7 @@ func getVersions(c *lambda.Lambda, name string) (versions []*lambda.FunctionConf
 	return
 }
 
-// filterLatest returns a slice of functions without $LATEST.
+// filterLatest returns a slice without $LATEST.
 func filterLatest(in []*lambda.FunctionConfiguration) (out []*lambda.FunctionConfiguration) {
 	for _, v := range in {
 		if *v.Version != "$LATEST" {
