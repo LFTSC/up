@@ -2,6 +2,7 @@ package lambda
 
 import (
 	"sort"
+	"strings"
 
 	"github.com/apex/up/platform/event"
 	"github.com/aws/aws-sdk-go/aws"
@@ -20,11 +21,26 @@ func (p *Platform) ShowDeploys(region string) error {
 		return errors.Wrap(err, "fetching aliases")
 	}
 
+	aliases = filterPrevious(aliases)
+
 	p.events.Emit("platform.deploys", event.Fields{
 		"aliases": aliases,
 	})
 
 	return nil
+}
+
+// filterPrevious returns aliases filtered of "previous" aliases for rollbacks.
+func filterPrevious(aliases []*lambda.AliasConfiguration) (filtered []*lambda.AliasConfiguration) {
+	for _, a := range aliases {
+		if strings.Contains(*a.Name, "-previous") {
+			continue
+		}
+
+		filtered = append(filtered, a)
+	}
+
+	return
 }
 
 // getAliases returns function aliases sorted by version.
