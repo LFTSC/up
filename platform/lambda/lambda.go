@@ -501,7 +501,7 @@ func (p *Platform) deploy(region string, d up.Deploy) (version string, err error
 
 	if util.IsNotFound(err) {
 		defer p.events.Time("platform.function.create", fields)
-		return p.createFunction(c, a, u, region, d.Stage)
+		return p.createFunction(c, a, u, region, d)
 	}
 
 	if err != nil {
@@ -509,7 +509,7 @@ func (p *Platform) deploy(region string, d up.Deploy) (version string, err error
 	}
 
 	defer p.events.Time("platform.function.update", fields)
-	return p.updateFunction(c, a, u, region, d.Stage)
+	return p.updateFunction(c, a, u, region, d)
 }
 
 // createFunction creates the function.
