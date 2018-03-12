@@ -3,6 +3,7 @@ package lambda
 import (
 	"encoding/json"
 	"os"
+	"sort"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -26,10 +27,6 @@ func (p *Platform) ShowDeploys(region string) error {
 		enc.Encode(aliases)
 	}
 
-	// list aliases
-	// output git aliases
-	// star them if matching prod etc
-
 	// 		p.events.Emit("metrics.value", event.Fields{
 	// 		"name":   s.Name,
 	// 		"value":  s.Value(),
@@ -39,6 +36,7 @@ func (p *Platform) ShowDeploys(region string) error {
 	return nil
 }
 
+// getAliases returns function aliases sorted by version.
 func getAliases(c *lambda.Lambda, name string) (aliases []*lambda.AliasConfiguration, err error) {
 	var marker *string
 
@@ -60,6 +58,12 @@ func getAliases(c *lambda.Lambda, name string) (aliases []*lambda.AliasConfigura
 			break
 		}
 	}
+
+	sort.Slice(aliases, func(i int, j int) bool {
+		a := aliases[i]
+		b := aliases[j]
+		return *a.FunctionVersion > *b.FunctionVersion
+	})
 
 	return
 }
