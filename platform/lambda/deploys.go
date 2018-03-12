@@ -31,27 +31,32 @@ func (p *Platform) ShowDeploys(region string) error {
 	sortVersionsDesc(versions)
 	defer util.Pad()()
 
-	for _, v := range versions {
-		version := *v.Version
-
-		if version == "$LATEST" {
+	for _, f := range versions {
+		if *f.Version == "$LATEST" {
 			continue
 		}
 
-		stage := *v.Environment.Variables["UP_STAGE"]
-		commit := v.Environment.Variables["UP_COMMIT"]
-		created := *v.LastModified
-
-		if commit != nil {
-			fmt.Printf("  %15s -> %s (%s) %s\n", stage, *commit, version, created)
-		}
+		showFunction(f)
 	}
 
-	// p.events.Emit("platform.deploys", event.Fields{
-	// 	"aliases": aliases,
-	// })
-
 	return nil
+}
+
+// showFunction outputs the change.
+func showFunction(f *lambda.FunctionConfiguration) {
+	commit := f.Environment.Variables["UP_COMMIT"]
+	stage := *f.Environment.Variables["UP_STAGE"]
+	created := *f.LastModified
+	version := *f.Version
+
+	// no git commit
+	if commit == nil || *commit == "" {
+		fmt.Printf("  %15s -> %s %s\n", stage, version, created)
+		return
+	}
+
+	// git commit
+	fmt.Printf("  %15s -> %s (%s) %s\n", stage, *commit, version, created)
 }
 
 // getAliases returns all function aliases.
