@@ -197,6 +197,8 @@ func (r *reporter) Start() {
 				util.LogName("endpoint", e.String("endpoint"))
 			case "platform.stack.show.version":
 				util.LogName("version", e.String("version"))
+			case "platform.stack.show.version.alias":
+				// TODO: implement
 			case "stack.plan":
 				fmt.Printf("\n")
 			case "platform.stack.plan.change":
