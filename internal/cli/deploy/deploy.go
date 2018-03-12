@@ -113,6 +113,7 @@ retry:
 		"is_git":               commit.Author.Name != "",
 		"alerts_count":         len(c.Alerts),
 		"actions_count":        len(c.Actions),
+		"is_git":               author != "",
 	})
 
 	stats.Flush()
