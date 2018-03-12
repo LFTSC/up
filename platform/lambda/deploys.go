@@ -98,7 +98,7 @@ func formatDate(t time.Time) string {
 	case d <= 12*time.Hour:
 		return humanize.RelTime(time.Now(), t, "from now", "ago")
 	case d <= 24*time.Hour:
-		return t.Format(`2` + util.DateSuffix(t) + ` 03:04:05pm`)
+		return t.Format(`Today at 03:04:05pm`)
 	default:
 		return t.Format(`Jan 2` + util.DateSuffix(t) + ` 03:04:05pm`)
 	}
