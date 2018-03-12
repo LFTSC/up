@@ -69,6 +69,7 @@ func addFunction(t *table.Table, f *lambda.FunctionConfiguration) {
 	})
 }
 
+// formatStage returns the stage string format.
 func formatStage(s string) string {
 	switch s {
 	case "production":
