@@ -460,12 +460,13 @@ func IsCI() bool {
 // requirement of matching (?!^[0-9]+$)([a-zA-Z0-9-_]+).
 func EncodeAlias(s string) string {
 	s = strings.Replace(s, ".", "_", -1)
-	return s
+	return "git-" + s
 }
 
 // DecodeAlias decodes an alias string which was encoded by
 // the EncodeAlias function.
 func DecodeAlias(s string) string {
 	s = strings.Replace(s, "_", ".", -1)
+	s = strings.Replace(s, "git-", "", 1)
 	return s
 }

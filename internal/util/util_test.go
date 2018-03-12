@@ -117,7 +117,7 @@ aws_secret_access_key = foo_bar_secret
 }
 
 func TestEncodeAlias(t *testing.T) {
-	assert.Equal(t, `v1_2_3-beta`, EncodeAlias(`v1.2.3-beta`))
+	assert.Equal(t, `git-v1_2_3-beta`, EncodeAlias(`v1.2.3-beta`))
 }
 
 func TestDecodeAlias(t *testing.T) {
