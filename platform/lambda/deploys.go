@@ -32,9 +32,14 @@ func (p *Platform) ShowDeploys(region string) error {
 	defer util.Pad()()
 
 	for _, v := range versions {
+		version := *v.Version
+
+		if version == "$LATEST" {
+			continue
+		}
+
 		stage := *v.Environment.Variables["UP_STAGE"]
 		commit := v.Environment.Variables["UP_COMMIT"]
-		version := *v.Version
 		if commit != nil {
 			fmt.Printf("  %s -> %s (%s)\n", stage, *commit, version)
 		}
