@@ -4,6 +4,7 @@ import (
 	"sort"
 	"time"
 
+	"github.com/apex/up/internal/colors"
 	"github.com/apex/up/internal/table"
 	"github.com/apex/up/internal/util"
 	"github.com/araddon/dateparse"
@@ -27,12 +28,23 @@ func (p *Platform) ShowDeploys(region string) error {
 	sortVersionsDesc(versions)
 	t := table.New()
 
-	for _, f := range versions {
-		if *f.Version == "$LATEST" {
-			continue
-		}
+	t.AddRow(table.Row{
+		{Text: colors.Bold("Stage")},
+		{Text: colors.Bold("Version")},
+		{Text: colors.Bold("Lambda")},
+		{Text: colors.Bold("Date")},
+	})
 
-		addFunction(t, f)
+	t.AddRow(table.Row{
+		{
+			Span: 4,
+		},
+	})
+
+	for _, f := range versions {
+		if *f.Version != "$LATEST" {
+			addFunction(t, f)
+		}
 	}
 
 	defer util.Pad()()
@@ -50,11 +62,20 @@ func addFunction(t *table.Table, f *lambda.FunctionConfiguration) {
 	version := *f.Version
 
 	t.AddRow(table.Row{
-		{Text: stage},
-		{Text: util.DefaultString(commit, "–")},
+		{Text: formatStage(stage)},
+		{Text: colors.Gray(util.DefaultString(commit, "–"))},
 		{Text: version},
 		{Text: date},
 	})
+}
+
+func formatStage(s string) string {
+	switch s {
+	case "production":
+		return colors.Bold(colors.Purple(s))
+	default:
+		return colors.Purple(s)
+	}
 }
 
 // getVersions returns all function versions.
