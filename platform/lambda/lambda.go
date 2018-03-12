@@ -542,7 +542,7 @@ retry:
 		MemorySize:   aws.Int64(int64(p.config.Lambda.Memory)),
 		Timeout:      aws.Int64(int64(p.config.Proxy.Timeout + 3)),
 		Publish:      aws.Bool(true),
-		Environment:  toEnv(p.config.Environment, d.Stage),
+		Environment:  toEnv(p.config.Environment, d),
 		Code: &lambda.FunctionCode{
 			S3Bucket: b,
 			S3Key:    k,
@@ -597,7 +597,7 @@ func (p *Platform) updateFunction(c *lambda.Lambda, a *apigateway.APIGateway, up
 		Role:         &p.config.Lambda.Role,
 		MemorySize:   aws.Int64(int64(p.config.Lambda.Memory)),
 		Timeout:      aws.Int64(int64(p.config.Proxy.Timeout + 3)),
-		Environment:  toEnv(p.config.Environment, d.Stage),
+		Environment:  toEnv(p.config.Environment, d),
 	})
 
 	if err != nil {
@@ -865,9 +865,11 @@ func isCreatingRole(err error) bool {
 }
 
 // toEnv returns a lambda environment.
-func toEnv(env config.Environment, stage string) *lambda.Environment {
+func toEnv(env config.Environment, d up.Deploy) *lambda.Environment {
 	m := aws.StringMap(env)
-	m["UP_STAGE"] = &stage
+	m["UP_STAGE"] = &d.Stage
+	m["UP_COMMIT"] = &d.Commit
+	m["UP_AUTHOR"] = &d.Author
 	return &lambda.Environment{
 		Variables: m,
 	}
