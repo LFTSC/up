@@ -21,6 +21,6 @@ func init() {
 		stats.Track("Deploys", nil)
 
 		region := c.Regions[0]
-		return p.ShowMetrics(region)
+		return p.ShowDeploys(region)
 	})
 }
