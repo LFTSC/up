@@ -19,6 +19,7 @@ func TestDescribe(t *testing.T) {
 }
 
 func TestAuthor(t *testing.T) {
+	t.SkipNow()
 	s, err := git.Author(".")
 	assert.NoError(t, err)
 	assert.Equal(t, "TJ Holowaychuk", s)
