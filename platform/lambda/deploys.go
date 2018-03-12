@@ -2,6 +2,7 @@ package lambda
 
 import (
 	"sort"
+	"strconv"
 	"time"
 
 	"github.com/apex/up/internal/colors"
@@ -25,6 +26,7 @@ func (p *Platform) ShowDeploys(region string) error {
 		return errors.Wrap(err, "fetching versions")
 	}
 
+	versions = filterLatest(versions)
 	sortVersionsDesc(versions)
 	t := table.New()
 
@@ -104,13 +106,33 @@ func getVersions(c *lambda.Lambda, name string) (versions []*lambda.FunctionConf
 	return
 }
 
+// filterLatest returns a slice of functions without $LATEST.
+func filterLatest(in []*lambda.FunctionConfiguration) (out []*lambda.FunctionConfiguration) {
+	for _, v := range in {
+		if *v.Version != "$LATEST" {
+			out = append(out, v)
+		}
+	}
+	return
+}
+
 // sortVersionsDesc sorts versions descending.
 func sortVersionsDesc(versions []*lambda.FunctionConfiguration) {
 	sort.Slice(versions, func(i int, j int) bool {
-		a := *versions[i].Version
-		b := *versions[j].Version
+		a := mustParseInt(*versions[i].Version)
+		b := mustParseInt(*versions[j].Version)
+
 		return a > b
 	})
+}
+
+// mustParseInt returns an int from string.
+func mustParseInt(s string) int64 {
+	n, err := strconv.ParseInt(s, 10, 64)
+	if err != nil {
+		panic(errors.Wrapf(err, "parsing integer string %v", s))
+	}
+	return n
 }
 
 // formatDate formats t relative to now.
