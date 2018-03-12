@@ -21,6 +21,7 @@ func (p *Platform) ShowDeploys(region string) error {
 		res, err := c.ListAliases(&lambda.ListAliasesInput{
 			FunctionName: &p.config.Name,
 			Marker:       marker,
+			MaxItems:     aws.Int64(10000),
 		})
 
 		if err != nil {
