@@ -167,3 +167,11 @@ func TestParseEnviron(t *testing.T) {
 		assert.EqualError(t, err, `"BAR" is missing a value`)
 	})
 }
+
+func TestEncodeAlias(t *testing.T) {
+	assert.Equal(t, `v1_2_3-beta`, EncodeAlias(`v1.2.3-beta`))
+}
+
+func TestDecodeAlias(t *testing.T) {
+	assert.Equal(t, `v1.2.3-beta`, DecodeAlias(EncodeAlias(`v1.2.3-beta`)))
+}
