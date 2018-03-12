@@ -74,6 +74,7 @@ retry:
 	if err != nil {
 		return errors.Wrap(err, "fetching git tag or sha")
 	}
+	commit = util.EncodeAlias(commit)
 
 	defer util.Pad()()
 	start := time.Now()
