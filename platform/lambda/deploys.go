@@ -3,12 +3,14 @@ package lambda
 import (
 	"fmt"
 	"sort"
+	"time"
 
 	"github.com/apex/up/internal/util"
 	"github.com/araddon/dateparse"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/lambda"
+	"github.com/dustin/go-humanize"
 	"github.com/pkg/errors"
 )
 
@@ -50,14 +52,16 @@ func showFunction(f *lambda.FunctionConfiguration) {
 	created := dateparse.MustParse(*f.LastModified)
 	version := *f.Version
 
+	t := humanize.RelTime(time.Now(), created, "from now", "ago")
+
 	// no git commit
 	if commit == nil || *commit == "" {
-		fmt.Printf("  %15s -> %s %s\n", stage, version, created)
+		fmt.Printf("  %15s -> %s %s\n", stage, version, t)
 		return
 	}
 
 	// git commit
-	fmt.Printf("  %15s -> %s (%s) %s\n", stage, *commit, version, created)
+	fmt.Printf("  %15s -> %s (%s) %s\n", stage, *commit, version, t)
 }
 
 // getAliases returns all function aliases.
