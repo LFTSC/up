@@ -1,7 +1,6 @@
 package lambda
 
 import (
-	"sort"
 	"strings"
 
 	"github.com/apex/up/platform/event"
@@ -15,6 +14,8 @@ import (
 func (p *Platform) ShowDeploys(region string) error {
 	s := session.New(aws.NewConfig().WithRegion(region))
 	c := lambda.New(s)
+
+	c.ListVersionsByFunction(input)
 
 	aliases, err := getAliases(c, p.config.Name)
 	if err != nil {
@@ -43,7 +44,7 @@ func filterPrevious(aliases []*lambda.AliasConfiguration) (filtered []*lambda.Al
 	return
 }
 
-// getAliases returns function aliases sorted by version.
+// getAliases returns all function aliases.
 func getAliases(c *lambda.Lambda, name string) (aliases []*lambda.AliasConfiguration, err error) {
 	var marker *string
 
@@ -51,7 +52,7 @@ func getAliases(c *lambda.Lambda, name string) (aliases []*lambda.AliasConfigura
 		res, err := c.ListAliases(&lambda.ListAliasesInput{
 			FunctionName: &name,
 			Marker:       marker,
-			MaxItems:     aws.Int64(10000),
+			MaxItems:     aws.Int64(5000),
 		})
 
 		if err != nil {
@@ -66,11 +67,30 @@ func getAliases(c *lambda.Lambda, name string) (aliases []*lambda.AliasConfigura
 		}
 	}
 
-	sort.Slice(aliases, func(i int, j int) bool {
-		a := aliases[i]
-		b := aliases[j]
-		return *a.FunctionVersion > *b.FunctionVersion
-	})
+	return
+}
+
+// getVersions returns all function versions.
+func getVersions(c *lambda.Lambda, name string) (versions []*lambda.FunctionConfiguration, err error) {
+	var marker *string
+
+	for {
+		res, err := c.ListVersionsByFunction(&lambda.ListVersionsByFunctionInput{
+			FunctionName: &name,
+			MaxItems:     aws.Int64(5000),
+		})
+
+		if err != nil {
+			return nil, err
+		}
+
+		versions = append(versions, res.Versions...)
+
+		marker = res.NextMarker
+		if marker == nil {
+			break
+		}
+	}
 
 	return
 }
