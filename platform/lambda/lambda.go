@@ -639,6 +639,7 @@ func (p *Platform) alias(c *lambda.Lambda, alias, version string) error {
 		FunctionName:    &p.config.Name,
 		FunctionVersion: &version,
 		Name:            &alias,
+		Description:     aws.String(util.ManagedByUp("")),
 	})
 
 	if util.IsNotFound(err) {
@@ -646,6 +647,7 @@ func (p *Platform) alias(c *lambda.Lambda, alias, version string) error {
 			FunctionName:    &p.config.Name,
 			FunctionVersion: &version,
 			Name:            &alias,
+			Description:     aws.String(util.ManagedByUp("")),
 		})
 	}
 
