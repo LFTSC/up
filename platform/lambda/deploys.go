@@ -15,29 +15,15 @@ func (p *Platform) ShowDeploys(region string) error {
 	s := session.New(aws.NewConfig().WithRegion(region))
 	c := lambda.New(s)
 
-	var marker *string
+	aliases, err := getAliases(c, p.config.Name)
+	if err != nil {
+		return errors.Wrap(err, "fetching aliases")
+	}
 
-	for {
-		res, err := c.ListAliases(&lambda.ListAliasesInput{
-			FunctionName: &p.config.Name,
-			Marker:       marker,
-			MaxItems:     aws.Int64(10000),
-		})
-
-		if err != nil {
-			return errors.Wrap(err, "listing aliases")
-		}
-
-		{
-			enc := json.NewEncoder(os.Stderr)
-			enc.SetIndent("", "  ")
-			enc.Encode(res.Aliases)
-		}
-
-		marker = res.NextMarker
-		if marker == nil {
-			break
-		}
+	{
+		enc := json.NewEncoder(os.Stderr)
+		enc.SetIndent("", "  ")
+		enc.Encode(aliases)
 	}
 
 	// list aliases
@@ -51,4 +37,29 @@ func (p *Platform) ShowDeploys(region string) error {
 	// 	})
 
 	return nil
+}
+
+func getAliases(c *lambda.Lambda, name string) (aliases []*lambda.AliasConfiguration, err error) {
+	var marker *string
+
+	for {
+		res, err := c.ListAliases(&lambda.ListAliasesInput{
+			FunctionName: &name,
+			Marker:       marker,
+			MaxItems:     aws.Int64(10000),
+		})
+
+		if err != nil {
+			return nil, err
+		}
+
+		aliases = append(aliases, res.Aliases...)
+
+		marker = res.NextMarker
+		if marker == nil {
+			break
+		}
+	}
+
+	return
 }
