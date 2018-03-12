@@ -1,10 +1,10 @@
 package lambda
 
 import (
-	"fmt"
 	"sort"
 	"time"
 
+	"github.com/apex/up/internal/table"
 	"github.com/apex/up/internal/util"
 	"github.com/araddon/dateparse"
 	"github.com/aws/aws-sdk-go/aws"
@@ -27,21 +27,24 @@ func (p *Platform) ShowDeploys(region string) error {
 	}
 
 	sortVersionsDesc(versions)
-	defer util.Pad()()
+	t := table.New()
 
 	for _, f := range versions {
 		if *f.Version == "$LATEST" {
 			continue
 		}
 
-		showFunction(f)
+		addFunction(t, f)
 	}
+
+	defer util.Pad()()
+	t.Println()
 
 	return nil
 }
 
-// showFunction outputs the change.
-func showFunction(f *lambda.FunctionConfiguration) {
+// addFunction adds function to table.
+func addFunction(t *table.Table, f *lambda.FunctionConfiguration) {
 	commit := f.Environment.Variables["UP_COMMIT"]
 	stage := *f.Environment.Variables["UP_STAGE"]
 	created := dateparse.MustParse(*f.LastModified)
@@ -50,12 +53,22 @@ func showFunction(f *lambda.FunctionConfiguration) {
 
 	// no git commit
 	if commit == nil || *commit == "" {
-		fmt.Printf("  %15s -> %s %s\n", stage, version, date)
+		t.AddRow(table.Row{
+			{Text: stage},
+			{Text: ""},
+			{Text: version},
+			{Text: date},
+		})
 		return
 	}
 
 	// git commit
-	fmt.Printf("  %15s -> %s (%s) %s\n", stage, *commit, version, date)
+	t.AddRow(table.Row{
+		{Text: stage},
+		{Text: *commit},
+		{Text: version},
+		{Text: date},
+	})
 }
 
 // getVersions returns all function versions.
