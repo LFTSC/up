@@ -15,6 +15,7 @@ import (
 	"net/url"
 	"os"
 	"os/exec"
+	"regexp"
 	"sort"
 	"strings"
 	"syscall"
@@ -551,4 +552,11 @@ func RelativeDate(t time.Time) string {
 	default:
 		return t.Format(`Jan 2` + DateSuffix(t) + ` 03:04:05pm`)
 	}
+}
+
+var numericRe = regexp.MustCompile(`^[0-9]+$`)
+
+// IsNumeric returns true if s is numeric.
+func IsNumeric(s string) bool {
+	return numericRe.MatchString(s)
 }
