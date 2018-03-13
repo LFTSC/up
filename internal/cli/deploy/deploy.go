@@ -83,7 +83,7 @@ retry:
 
 	if err := p.Deploy(up.Deploy{
 		Stage:  stage,
-		Commit: commit.AbbreviatedCommit,
+		Commit: commit.Describe(),
 		Author: commit.Author.Name,
 	}); err != nil {
 		return err
