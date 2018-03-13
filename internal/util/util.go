@@ -560,6 +560,8 @@ func RelativeDate(t time.Time) string {
 		return humanize.RelTime(time.Now(), t, "from now", "ago")
 	case d <= 24*time.Hour:
 		return t.Format(`Today at 03:04:05pm`)
+	case d <= 24*time.Hour*2:
+		return t.Format(`Yesterday at 03:04:05pm`)
 	default:
 		return t.Format(`Jan 2` + DateSuffix(t) + ` 03:04:05pm`)
 	}
