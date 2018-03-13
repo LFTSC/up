@@ -32,11 +32,12 @@ func (p *Platform) ShowDeploys(region string) error {
 		{Text: colors.Bold("Stage")},
 		{Text: colors.Bold("Version")},
 		{Text: colors.Bold("Date")},
+		{Text: colors.Bold("Author")},
 	})
 
 	t.AddRow(table.Row{
 		{
-			Span: 3,
+			Span: 4,
 		},
 	})
 
@@ -55,6 +56,7 @@ func (p *Platform) ShowDeploys(region string) error {
 // addFunction adds function to table.
 func addFunction(t *table.Table, f *lambda.FunctionConfiguration) {
 	commit := f.Environment.Variables["UP_COMMIT"]
+	author := f.Environment.Variables["UP_AUTHOR"]
 	stage := *f.Environment.Variables["UP_STAGE"]
 	created := dateparse.MustParse(*f.LastModified)
 	date := util.RelativeDate(created)
@@ -64,6 +66,7 @@ func addFunction(t *table.Table, f *lambda.FunctionConfiguration) {
 		{Text: formatStage(stage)},
 		{Text: colors.Gray(util.DefaultString(commit, version))},
 		{Text: date},
+		{Text: colors.Gray(util.DefaultString(author, "–"))},
 	})
 }
 
