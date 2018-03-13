@@ -18,6 +18,7 @@ import (
 func main() {
 	start := time.Now()
 	stage := os.Getenv("UP_STAGE")
+	commit := os.Getenv("UP_COMMIT")
 
 	// setup logging
 	log.SetHandler(json.Default)
@@ -25,6 +26,9 @@ func main() {
 		log.SetLevelFromString(s)
 	}
 	log.Log = log.WithField("stage", stage)
+	if commit != "" {
+		log.Log = log.WithField("commit", commit)
+	}
 	log.Info("initializing")
 
 	// read config
