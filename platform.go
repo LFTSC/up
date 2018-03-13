@@ -43,14 +43,6 @@ type Domains interface {
 	List() ([]*Domain, error)
 }
 
-<<<<<<< HEAD
-// Deploy config.
-type Deploy struct {
-	Stage  string
-	Commit string
-	Author string
-}
-
 // Secret is an encrypted variable..
 type Secret struct {
 	App              string
