@@ -655,7 +655,7 @@ func (p *Platform) updateFunction(c *lambda.Lambda, a *apigateway.APIGateway, up
 	}
 
 	// get current alias
-	curr, err := getAliasVersion(c, p.config.Name, stage)
+	curr, err := getAliasVersion(c, p.config.Name, d.Stage)
 	if err != nil {
 		return "", errors.Wrap(err, "fetching current version")
 	}
