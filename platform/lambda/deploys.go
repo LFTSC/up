@@ -24,7 +24,7 @@ func (p *Platform) ShowDeploys(region string) error {
 		return errors.Wrap(err, "fetching versions")
 	}
 
-	versions = filterLatest(versions)
+	versions = filterN(filterLatest(versions), 25)
 	sortVersionsDesc(versions)
 	t := table.New()
 
@@ -99,6 +99,17 @@ func getVersions(c *lambda.Lambda, name string) (versions []*lambda.FunctionConf
 		}
 	}
 
+	return
+}
+
+// filterN returns a slice of the first n versions.
+func filterN(in []*lambda.FunctionConfiguration, n int) (out []*lambda.FunctionConfiguration) {
+	for i, v := range in {
+		if i-1 == n {
+			break
+		}
+		out = append(out, v)
+	}
 	return
 }
 
