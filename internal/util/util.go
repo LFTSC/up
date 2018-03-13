@@ -459,13 +459,15 @@ func IsCI() bool {
 // EncodeAlias encodes an alias string so that it conforms to the
 // requirement of matching (?!^[0-9]+$)([a-zA-Z0-9-_]+).
 func EncodeAlias(s string) string {
-	return strings.Replace(s, ".", "_", -1)
+	return "commit-" + strings.Replace(s, ".", "_", -1)
 }
 
 // DecodeAlias decodes an alias string which was encoded by
 // the EncodeAlias function.
 func DecodeAlias(s string) string {
-	return strings.Replace(s, "_", ".", -1)
+	s = strings.Replace(s, "_", ".", -1)
+	s = strings.Replace(s, "commit-", "", 1)
+	return s
 }
 
 // DateSuffix returns the date suffix for t.
