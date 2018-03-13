@@ -5,12 +5,12 @@ import (
 	"time"
 
 	"github.com/pkg/errors"
+	"github.com/tj/go/git"
 	"github.com/tj/go/term"
 	"github.com/tj/kingpin"
 
 	"github.com/apex/up"
 	"github.com/apex/up/internal/cli/root"
-	"github.com/apex/up/internal/git"
 	"github.com/apex/up/internal/setup"
 	"github.com/apex/up/internal/stats"
 	"github.com/apex/up/internal/util"
@@ -69,7 +69,7 @@ retry:
 	}
 
 	// git information
-	commit, author, err := getRepoInfo()
+	commit, err := getCommit()
 	if err != nil {
 		return errors.Wrap(err, "fetching git tag or sha")
 	}
@@ -83,8 +83,8 @@ retry:
 
 	if err := p.Deploy(up.Deploy{
 		Stage:  stage,
-		Commit: commit,
-		Author: author,
+		Commit: commit.AbbreviatedCommit,
+		Author: commit.Author.Name,
 	}); err != nil {
 		return err
 	}
@@ -108,7 +108,7 @@ retry:
 		"has_profile":          c.Profile != "",
 		"has_error_pages":      !c.ErrorPages.Disable,
 		"app_name_hash":        util.Md5(c.Name),
-		"is_git":               author != "",
+		"is_git":               commit.Author.Name != "",
 	})
 
 	stats.Flush()
@@ -122,19 +122,14 @@ func isMissingConfig(err error) bool {
 	return ok && e.Path == "up.json"
 }
 
-// getRepoInfo returns the git information when available.
-func getRepoInfo() (commit, author string, err error) {
-	commit, err = git.Describe(".")
+// getCommit returns the git information when available.
+func getCommit() (git.Commit, error) {
+	c, err := git.GetCommit(".", "HEAD")
 	if err != nil && !isIgnorable(err) {
-		return "", "", err
+		return git.Commit{}, err
 	}
 
-	author, err = git.Author(".")
-	if err != nil && !isIgnorable(err) {
-		return "", "", err
-	}
-
-	return commit, author, nil
+	return *c, nil
 }
 
 // isIgnorable returns true if the GIT error is ignorable.
