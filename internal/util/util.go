@@ -467,3 +467,17 @@ func EncodeAlias(s string) string {
 func DecodeAlias(s string) string {
 	return strings.Replace(s, "_", ".", -1)
 }
+
+// DateSuffix returns the date suffix for t.
+func DateSuffix(t time.Time) string {
+	switch t.Day() {
+	case 1, 21, 31:
+		return "st"
+	case 2, 22:
+		return "nd"
+	case 3, 23:
+		return "rd"
+	default:
+		return "th"
+	}
+}
