@@ -31,8 +31,8 @@ func (p *Platform) ShowDeploys(region string) error {
 	t.AddRow(table.Row{
 		{Text: colors.Bold("Stage")},
 		{Text: colors.Bold("Version")},
-		{Text: colors.Bold("Date")},
 		{Text: colors.Bold("Author")},
+		{Text: colors.Bold("Date")},
 	})
 
 	t.AddRow(table.Row{
@@ -65,8 +65,8 @@ func addFunction(t *table.Table, f *lambda.FunctionConfiguration) {
 	t.AddRow(table.Row{
 		{Text: formatStage(stage)},
 		{Text: colors.Gray(util.DefaultString(commit, version))},
-		{Text: date},
 		{Text: colors.Gray(util.DefaultString(author, "–"))},
+		{Text: date},
 	})
 }
 
