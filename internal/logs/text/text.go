@@ -97,10 +97,6 @@ func (h *Handler) handleExpanded(e *log.Entry) error {
 	fmt.Fprintf(h.Writer, "  %s %s %s\n", colors.Gray(ts), bold(color(level)), colors.Purple(e.Message))
 
 	for _, name := range names {
-		if omit[name] {
-			continue
-		}
-
 		v := e.Fields.Get(name)
 
 		if v == "" {
