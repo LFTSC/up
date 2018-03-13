@@ -539,20 +539,6 @@ func DateSuffix(t time.Time) string {
 	}
 }
 
-// DateSuffix returns the date suffix for t.
-func DateSuffix(t time.Time) string {
-	switch t.Day() {
-	case 1, 21, 31:
-		return "st"
-	case 2, 22:
-		return "nd"
-	case 3, 23:
-		return "rd"
-	default:
-		return "th"
-	}
-}
-
 // RelativeDate returns a date formatted relative to now.
 func RelativeDate(t time.Time) string {
 	switch d := time.Since(t); {

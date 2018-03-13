@@ -168,10 +168,8 @@ func TestParseEnviron(t *testing.T) {
 	})
 }
 
-func TestEncodeAlias(t *testing.T) {
-	assert.Equal(t, `git-v1_2_3-beta`, EncodeAlias(`v1.2.3-beta`))
-}
-
-func TestDecodeAlias(t *testing.T) {
-	assert.Equal(t, `v1.2.3-beta`, DecodeAlias(EncodeAlias(`v1.2.3-beta`)))
+func TestIsNumeric(t *testing.T) {
+	assert.True(t, IsNumeric("1234"))
+	assert.False(t, IsNumeric("d9ff768"))
+	assert.False(t, IsNumeric("v1.0.0"))
 }

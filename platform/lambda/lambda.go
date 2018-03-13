@@ -200,24 +200,28 @@ func (p *Platform) Rollback(region, stage, version string) error {
 	c := lambda.New(session.New(aws.NewConfig().WithRegion(region)))
 	log.Debugf("rolling back %s %s to %q", region, stage, version)
 
-	if version == "" {
-		log.Debug("fetching previous version")
-		v, err := getAliasVersion(c, p.config.Name, previous(stage))
+	// git commit or tag
+	if version != "" && !util.IsNumeric(version) {
+		log.Debugf("fetching version for %q", version)
+		v, err := getAliasVersion(c, p.config.Name, version)
 		if err != nil {
-			return errors.Wrap(err, "fetching previous alias")
+			return errors.Wrapf(err, "fetching alias %q", version)
 		}
 		version = v
 	}
 
+	// fetch current version
 	curr, err := getAliasVersion(c, p.config.Name, stage)
 	if err != nil {
 		return errors.Wrap(err, "fetching current alias")
 	}
 
+	// update stage
 	if err := p.alias(c, stage, version); err != nil {
 		return errors.Wrap(err, "updating alias")
 	}
 
+	// update stage previous
 	if err := p.alias(c, previous(stage), curr); err != nil {
 		return errors.Wrap(err, "updating previous alias")
 	}
