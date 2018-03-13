@@ -484,6 +484,7 @@ func (p *Platform) deploy(region string, d up.Deploy) (version string, err error
 
 	defer func() {
 		fields["duration"] = time.Since(start)
+		fields["commit"] = d.Commit
 		fields["version"] = version
 		p.events.Emit("platform.deploy.complete", fields)
 	}()
