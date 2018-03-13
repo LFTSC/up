@@ -187,20 +187,6 @@ func formatDate(t time.Time) string {
 	}
 }
 
-// dateSuffix returns the date suffix for t.
-func dateSuffix(t time.Time) string {
-	switch t.Day() {
-	case 1, 21, 31:
-		return "st"
-	case 2, 22:
-		return "nd"
-	case 3, 23:
-		return "rd"
-	default:
-		return "th"
-	}
-}
-
 // version returns the entry version via GIT commit or lambda version.
 func version(e *log.Entry) string {
 	if s, ok := e.Fields.Get("commit").(string); ok && s != "" {
