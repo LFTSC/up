@@ -31,6 +31,7 @@ var omit = map[string]bool{
 	"stage":   true,
 	"region":  true,
 	"plugin":  true,
+	"commit":  true,
 	"version": true,
 }
 
@@ -127,7 +128,7 @@ func (h *Handler) handleInline(e *log.Entry) error {
 	ts := formatDate(e.Timestamp.Local())
 
 	if stage, ok := e.Fields.Get("stage").(string); ok && stage != "" {
-		fmt.Fprintf(&buf, "  %s %s %s %s{{spacer}}", colors.Gray(ts), bold(color(level)), colors.Gray(stage), colors.Purple(e.Message))
+		fmt.Fprintf(&buf, "  %s %s %s %s %s{{spacer}}", colors.Gray(ts), bold(color(level)), colors.Gray(stage), colors.Gray(version(e)), colors.Purple(e.Message))
 	} else {
 		fmt.Fprintf(&buf, "  %s %s %s{{spacer}}", colors.Gray(ts), bold(color(level)), colors.Purple(e.Message))
 	}
@@ -202,6 +203,19 @@ func dateSuffix(t time.Time) string {
 	default:
 		return "th"
 	}
+}
+
+// version returns the entry version via GIT commit or lambda version.
+func version(e *log.Entry) string {
+	if s, ok := e.Fields.Get("commit").(string); ok && s != "" {
+		return s
+	}
+
+	if s, ok := e.Fields.Get("version").(string); ok && s != "" {
+		return s
+	}
+
+	return ""
 }
 
 // bold string.
