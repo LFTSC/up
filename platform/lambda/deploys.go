@@ -73,7 +73,7 @@ func addFunction(t *table.Table, f *lambda.FunctionConfiguration) {
 func formatStage(s string) string {
 	switch s {
 	case "production":
-		return colors.Bold(colors.Purple(s))
+		return colors.Purple(s)
 	default:
 		return colors.Gray(s)
 	}
