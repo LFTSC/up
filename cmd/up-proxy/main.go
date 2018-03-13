@@ -10,6 +10,7 @@ import (
 
 	"github.com/apex/up"
 	"github.com/apex/up/handler"
+	"github.com/apex/up/internal/logs"
 	"github.com/apex/up/internal/proxy"
 	"github.com/apex/up/internal/util"
 	"github.com/apex/up/platform/aws/runtime"
@@ -18,17 +19,14 @@ import (
 func main() {
 	start := time.Now()
 	stage := os.Getenv("UP_STAGE")
-	commit := os.Getenv("UP_COMMIT")
 
 	// setup logging
 	log.SetHandler(json.Default)
 	if s := os.Getenv("LOG_LEVEL"); s != "" {
 		log.SetLevelFromString(s)
 	}
-	log.Log = log.WithField("stage", stage)
-	if commit != "" {
-		log.Log = log.WithField("commit", commit)
-	}
+
+	log.Log = log.WithFields(logs.Fields())
 	log.Info("initializing")
 
 	// read config
