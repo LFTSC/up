@@ -4,6 +4,7 @@ import (
 	"sort"
 	"strconv"
 
+	"github.com/apex/log"
 	"github.com/apex/up/internal/colors"
 	"github.com/apex/up/internal/table"
 	"github.com/apex/up/internal/util"
@@ -19,6 +20,7 @@ func (p *Platform) ShowDeploys(region string) error {
 	s := session.New(aws.NewConfig().WithRegion(region))
 	c := lambda.New(s)
 
+	log.Debug("fetching versions")
 	versions, err := getVersions(c, p.config.Name)
 	if err != nil {
 		return errors.Wrap(err, "fetching versions")
