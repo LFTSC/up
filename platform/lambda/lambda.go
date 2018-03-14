@@ -210,7 +210,17 @@ func (p *Platform) Rollback(region, stage, version string) error {
 		version = v
 	}
 
-	// fetch current version
+	// previous version
+	if version == "" {
+		log.Debug("fetching previous version")
+		v, err := getAliasVersion(c, p.config.Name, previous(stage))
+		if err != nil {
+			return errors.Wrap(err, "fetching previous alias")
+		}
+		version = v
+	}
+
+	// current version
 	curr, err := getAliasVersion(c, p.config.Name, stage)
 	if err != nil {
 		return errors.Wrap(err, "fetching current alias")
