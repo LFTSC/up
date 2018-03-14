@@ -90,13 +90,14 @@ func getVersions(c *lambda.Lambda, name string) (versions []*lambda.FunctionConf
 		res, err := c.ListVersionsByFunction(&lambda.ListVersionsByFunctionInput{
 			FunctionName: &name,
 			MaxItems:     aws.Int64(5000),
+			Marker:       marker,
 		})
 
 		if err != nil {
 			return nil, err
 		}
 
-		log.Debugf("fetched %d versions (%s)", len(res.Versions), *marker)
+		log.Debugf("fetched %d versions (marker=%s)", len(res.Versions), util.DefaultString(marker, "none"))
 		versions = append(versions, res.Versions...)
 
 		marker = res.NextMarker
