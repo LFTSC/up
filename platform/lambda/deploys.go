@@ -20,7 +20,6 @@ func (p *Platform) ShowDeploys(region string) error {
 	s := session.New(aws.NewConfig().WithRegion(region))
 	c := lambda.New(s)
 
-	log.Debug("fetching versions")
 	versions, err := getVersions(c, p.config.Name)
 	if err != nil {
 		return errors.Wrap(err, "fetching versions")
@@ -86,6 +85,7 @@ func formatStage(s string) string {
 func getVersions(c *lambda.Lambda, name string) (versions []*lambda.FunctionConfiguration, err error) {
 	var marker *string
 
+	log.Debug("fetching versions")
 	for {
 		res, err := c.ListVersionsByFunction(&lambda.ListVersionsByFunctionInput{
 			FunctionName: &name,
@@ -96,6 +96,7 @@ func getVersions(c *lambda.Lambda, name string) (versions []*lambda.FunctionConf
 			return nil, err
 		}
 
+		log.Debugf("fetched %d versions", len(res.Versions))
 		versions = append(versions, res.Versions...)
 
 		marker = res.NextMarker
@@ -103,6 +104,7 @@ func getVersions(c *lambda.Lambda, name string) (versions []*lambda.FunctionConf
 			break
 		}
 	}
+	log.Debug("fetched versions")
 
 	return
 }
