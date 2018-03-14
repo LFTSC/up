@@ -203,10 +203,11 @@ func (p *Platform) Rollback(region, stage, version string) error {
 	// git commit or tag
 	if version != "" && !util.IsNumeric(version) {
 		log.Debugf("fetching version for %q", version)
-		v, err := getAliasVersion(c, p.config.Name, version)
+		v, err := getAliasVersion(c, p.config.Name, util.EncodeAlias(version))
 		if err != nil {
 			return errors.Wrapf(err, "fetching alias %q", version)
 		}
+		log.Debugf("version for %q is %s", version, v)
 		version = v
 	}
 
