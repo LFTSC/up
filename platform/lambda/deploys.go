@@ -89,7 +89,7 @@ func getVersions(c *lambda.Lambda, name string) (versions []*lambda.FunctionConf
 	for {
 		res, err := c.ListVersionsByFunction(&lambda.ListVersionsByFunctionInput{
 			FunctionName: &name,
-			MaxItems:     aws.Int64(5000),
+			MaxItems:     aws.Int64(10000),
 			Marker:       marker,
 		})
 
