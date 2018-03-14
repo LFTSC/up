@@ -44,7 +44,7 @@ func init() {
 			"stage":       *stage,
 		})
 
-		util.LogClear("Rolling complete")
+		util.LogClear("Rollback complete")
 
 		return nil
 	})
