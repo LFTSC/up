@@ -96,7 +96,7 @@ func getVersions(c *lambda.Lambda, name string) (versions []*lambda.FunctionConf
 			return nil, err
 		}
 
-		log.Debugf("fetched %d versions", len(res.Versions))
+		log.Debugf("fetched %d versions (%s)", len(res.Versions), *marker)
 		versions = append(versions, res.Versions...)
 
 		marker = res.NextMarker
