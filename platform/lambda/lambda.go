@@ -225,6 +225,7 @@ func (p *Platform) Rollback(region, stage, version string) error {
 	if err != nil {
 		return errors.Wrap(err, "fetching current alias")
 	}
+	log.Debugf("current version is %s", curr)
 
 	// update stage
 	if err := p.alias(c, stage, version); err != nil {
