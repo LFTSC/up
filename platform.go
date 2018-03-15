@@ -43,13 +43,6 @@ type Domains interface {
 	List() ([]*Domain, error)
 }
 
-// Deploy config.
-type Deploy struct {
-	Stage  string
-	Commit string
-	Author string
-}
-
 // Secret is an encrypted variable..
 type Secret struct {
 	App              string
@@ -69,6 +62,13 @@ type Secrets interface {
 	Remove(key string) error
 	List(decrypt bool) ([]*Secret, error)
 	Load() ([]*Secret, error)
+}
+
+// Deploy config.
+type Deploy struct {
+	Stage  string
+	Commit string
+	Author string
 }
 
 // Platform is the interface for platform integration,
@@ -109,6 +109,7 @@ type Platform interface {
 	ApplyStack(region string) error
 
 	ShowMetrics(region, stage string, start time.Time) error
+	ShowDeploys(region string) error
 }
 
 // Runtime is the interface used by a platform to support

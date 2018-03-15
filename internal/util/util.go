@@ -15,12 +15,14 @@ import (
 	"net/url"
 	"os"
 	"os/exec"
+	"regexp"
 	"sort"
 	"strings"
 	"syscall"
 	"time"
 
 	"github.com/apex/up/internal/colors"
+	humanize "github.com/dustin/go-humanize"
 	"github.com/pascaldekloe/name"
 	"github.com/pkg/errors"
 	"github.com/tj/backoff"
@@ -474,34 +476,6 @@ func IsCI() bool {
 	return os.Getenv("CI") == "true"
 }
 
-// EncodeAlias encodes an alias string so that it conforms to the
-// requirement of matching (?!^[0-9]+$)([a-zA-Z0-9-_]+).
-func EncodeAlias(s string) string {
-	return "commit-" + strings.Replace(s, ".", "_", -1)
-}
-
-// DecodeAlias decodes an alias string which was encoded by
-// the EncodeAlias function.
-func DecodeAlias(s string) string {
-	s = strings.Replace(s, "_", ".", -1)
-	s = strings.Replace(s, "commit-", "", 1)
-	return s
-}
-
-// DateSuffix returns the date suffix for t.
-func DateSuffix(t time.Time) string {
-	switch t.Day() {
-	case 1, 21, 31:
-		return "st"
-	case 2, 22:
-		return "nd"
-	case 3, 23:
-		return "rd"
-	default:
-		return "th"
-	}
-}
-
 // EnvironMap returns environment as a map.
 func EnvironMap() map[string]string {
 	m, _ := ParseEnviron(os.Environ())
@@ -536,4 +510,53 @@ func ParseEnviron(env []string) (map[string]string, error) {
 	}
 
 	return m, nil
+}
+
+// EncodeAlias encodes an alias string so that it conforms to the
+// requirement of matching (?!^[0-9]+$)([a-zA-Z0-9-_]+).
+func EncodeAlias(s string) string {
+	return "commit-" + strings.Replace(s, ".", "_", -1)
+}
+
+// DecodeAlias decodes an alias string which was encoded by
+// the EncodeAlias function.
+func DecodeAlias(s string) string {
+	s = strings.Replace(s, "_", ".", -1)
+	s = strings.Replace(s, "commit-", "", 1)
+	return s
+}
+
+// DateSuffix returns the date suffix for t.
+func DateSuffix(t time.Time) string {
+	switch t.Day() {
+	case 1, 21, 31:
+		return "st"
+	case 2, 22:
+		return "nd"
+	case 3, 23:
+		return "rd"
+	default:
+		return "th"
+	}
+}
+
+// RelativeDate returns a date formatted relative to now.
+func RelativeDate(t time.Time) string {
+	switch d := time.Since(t); {
+	case d <= 12*time.Hour:
+		return humanize.RelTime(time.Now(), t, "from now", "ago")
+	case d <= 24*time.Hour:
+		return t.Format(`Today at 03:04:05pm`)
+	case d <= 24*time.Hour*2:
+		return t.Format(`Yesterday at 03:04:05pm`)
+	default:
+		return t.Format(`Jan 2` + DateSuffix(t) + ` 03:04:05pm`)
+	}
+}
+
+var numericRe = regexp.MustCompile(`^[0-9]+$`)
+
+// IsNumeric returns true if s is numeric.
+func IsNumeric(s string) bool {
+	return numericRe.MatchString(s)
 }

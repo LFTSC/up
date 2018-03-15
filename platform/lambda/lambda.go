@@ -200,6 +200,18 @@ func (p *Platform) Rollback(region, stage, version string) error {
 	c := lambda.New(session.New(aws.NewConfig().WithRegion(region)))
 	log.Debugf("rolling back %s %s to %q", region, stage, version)
 
+	// git commit or tag
+	if version != "" && !util.IsNumeric(version) {
+		log.Debugf("fetching version for %q", version)
+		v, err := getAliasVersion(c, p.config.Name, util.EncodeAlias(version))
+		if err != nil {
+			return errors.Wrapf(err, "fetching alias %q", version)
+		}
+		log.Debugf("version for %q is %s", version, v)
+		version = v
+	}
+
+	// previous version
 	if version == "" {
 		log.Debug("fetching previous version")
 		v, err := getAliasVersion(c, p.config.Name, previous(stage))
@@ -209,15 +221,19 @@ func (p *Platform) Rollback(region, stage, version string) error {
 		version = v
 	}
 
+	// current version
 	curr, err := getAliasVersion(c, p.config.Name, stage)
 	if err != nil {
 		return errors.Wrap(err, "fetching current alias")
 	}
+	log.Debugf("current version is %s", curr)
 
+	// update stage
 	if err := p.alias(c, stage, version); err != nil {
 		return errors.Wrap(err, "updating alias")
 	}
 
+	// update stage previous
 	if err := p.alias(c, previous(stage), curr); err != nil {
 		return errors.Wrap(err, "updating previous alias")
 	}
@@ -654,17 +670,31 @@ func (p *Platform) updateFunction(c *lambda.Lambda, a *apigateway.APIGateway, up
 		return "", errors.Wrap(err, "updating function code")
 	}
 
-	curr, err := getAliasVersion(c, p.config.Name, stage)
+	// get current alias
+	curr, err := getAliasVersion(c, p.config.Name, d.Stage)
 	if err != nil {
 		return "", errors.Wrap(err, "fetching current version")
 	}
 
-	if err := p.alias(c, stage, *res.Version); err != nil {
-		return "", errors.Wrapf(err, "creating function %q alias", stage)
+	// create stage alias
+	if err := p.alias(c, d.Stage, *res.Version); err != nil {
+		return "", errors.Wrapf(err, "creating function stage %q alias", d.Stage)
 	}
 
-	if err := p.alias(c, previous(stage), curr); err != nil {
-		return "", errors.Wrapf(err, "creating function %q alias", stage)
+	// create previous alias
+	if err := p.alias(c, previous(d.Stage), curr); err != nil {
+		return "", errors.Wrapf(err, "creating function %q alias", d.Stage)
+	}
+
+	// create git alias
+	if d.Commit != "" {
+		if err := p.alias(c, util.EncodeAlias(d.Commit), *res.Version); err != nil {
+			return "", errors.Wrapf(err, "creating function git %q alias", d.Commit)
+		}
+	}
+
+	if err := p.alias(c, previous(d.Stage), curr); err != nil {
+		return "", errors.Wrapf(err, "creating function %q alias", d.Stage)
 	}
 
 	return *res.Version, nil

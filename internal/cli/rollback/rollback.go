@@ -12,8 +12,11 @@ import (
 func init() {
 	cmd := root.Command("rollback", "Rollback to a previous deployment.")
 	cmd.Example(`up rollback`, "Rollback to the previous staging version.")
+	cmd.Example(`up rollback 15c46ba`, "Rollback to a specific git commit")
+	cmd.Example(`up rollback v1.7.2`, "Rollback to a specific git tag")
 	cmd.Example(`up rollback -s production`, "Rollback to the previous production version.")
-	cmd.Example(`up rollback -s production 50`, "Rollback to an explicit production version.")
+	cmd.Example(`up rollback -s production 15c46ba`, "Rollback to a specific git commit")
+	cmd.Example(`up rollback -s production v1.7.2`, "Rollback to a specific git tag")
 
 	stage := cmd.Flag("stage", "Target stage name.").Short('s').Default("staging").String()
 	version := cmd.Arg("version", "Target version for rollback.").String()
@@ -41,7 +44,7 @@ func init() {
 			"stage":       *stage,
 		})
 
-		util.LogClear("Rolling complete")
+		util.LogClear("Rollback complete")
 
 		return nil
 	})
