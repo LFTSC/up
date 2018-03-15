@@ -132,6 +132,10 @@ func getCommit() (git.Commit, error) {
 		return git.Commit{}, err
 	}
 
+	if c == nil {
+		return git.Commit{}, nil
+	}
+
 	return *c, nil
 }
 
