@@ -25,8 +25,8 @@ func (p *Platform) ShowDeploys(region string) error {
 		return errors.Wrap(err, "fetching versions")
 	}
 
-	versions = filterN(filterLatest(versions), 25)
 	sortVersionsDesc(versions)
+	versions = filterN(filterLatest(versions), 25)
 	t := table.New()
 
 	t.AddRow(table.Row{
