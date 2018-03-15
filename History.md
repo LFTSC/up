@@ -1,4 +1,11 @@
 
+v0.5.10-pro / 2018-03-15
+========================
+
+  * add nicer `up rollback` failure message when version does not exist
+  * add git sha and tag support to `up rollback`
+  * add `up deploys` for listing deployments and versions
+
 v0.5.9-pro / 2018-03-09
 =======================
 
