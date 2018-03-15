@@ -2,6 +2,7 @@ package rollback
 
 import (
 	"github.com/pkg/errors"
+	"github.com/tj/go/term"
 	"github.com/tj/kingpin"
 
 	"github.com/apex/up/internal/cli/root"
@@ -35,14 +36,21 @@ func init() {
 
 		util.Log("Rolling back %s", *stage)
 
-		if err := p.Rollback(r, *stage, v); err != nil {
-			return errors.Wrap(err, "rollback")
-		}
-
 		stats.Track("Rollback", map[string]interface{}{
 			"has_version": v != "",
 			"stage":       *stage,
 		})
+
+		err = p.Rollback(r, *stage, v)
+		if util.IsNotFound(err) {
+			term.MoveUp(1)
+			term.ClearLine()
+			return errors.Errorf("Rollback failed – version %q not found", *version)
+		}
+
+		if err != nil {
+			return errors.Wrap(err, "rollback")
+		}
 
 		util.LogClear("Rollback complete")
 
