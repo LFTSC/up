@@ -166,10 +166,22 @@ Args:
 
 ### Examples
 
-Rollback to the previous development version.
+Rollback to the previous staging version.
 
 ```
 $ up rollback
+```
+
+Rollback to a specific git commit
+
+```
+$ up rollback 15c46ba
+```
+
+Rollback to a specific git tag
+
+```
+$ up rollback v1.7.2
 ```
 
 Rollback to the previous production version.
@@ -178,10 +190,16 @@ Rollback to the previous production version.
 $ up rollback -s production
 ```
 
-Rollback to an explicit production version.
+Rollback to a specific git commit
 
 ```
-$ up rollback  -s production 50
+$ up rollback -s production 15c46ba
+```
+
+Rollback to a specific git tag
+
+```
+$ up rollback -s production v1.7.2
 ```
 
 ## Config
